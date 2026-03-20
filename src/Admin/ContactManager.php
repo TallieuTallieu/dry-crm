@@ -2,7 +2,9 @@
 
 namespace Tnt\Crm\Admin;
 
+use dry\admin\component\DateView;
 use dry\admin\component\EnumEdit;
+use dry\admin\component\EnumView;
 use dry\admin\component\Stack;
 use dry\admin\component\StringEdit;
 use dry\admin\component\StringView;
@@ -13,11 +15,16 @@ use dry\orm\action\Edit;
 use dry\orm\component\ForeignKeyIndexPicker;
 use dry\orm\component\InlineManager;
 use dry\orm\component\Pagination;
+use dry\orm\component\Search;
+use dry\orm\filter\EnumFilter;
 use dry\orm\Index;
 use dry\orm\Manager;
+use dry\orm\search\LikeSearcher;
 use dry\orm\sort\StaticSorter;
 use Tnt\Crm\Enum\Language;
 use Tnt\Crm\Model\Contact;
+use Tnt\Crm\Model\Country;
+use Tnt\Crm\Model\Organisation;
 
 class ContactManager extends Manager
 {
@@ -27,6 +34,7 @@ class ContactManager extends Manager
     {
         $model = Contact::class;
         $language_options = Language::enum();
+        $organisation_model = Organisation::class;
         extract($kwargs, EXTR_IF_EXISTS);
 
         parent::__construct($model, [
@@ -86,7 +94,7 @@ class ContactManager extends Manager
 
         $this->actions[] = $this->edit = new Edit([
             Stack::horizontal([
-                InlineManager::create(new OrganisationContactManager(new Contact()))
+                InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $organisation_model()]))
                     ->set_foreign_key('contact'),
                 Stack::vertical([
                     ...$generalComponents
@@ -96,24 +104,33 @@ class ContactManager extends Manager
 
         $this->actions[] = $delete = new Delete();
 
+        $this->header[] = new Search();
         $this->header[] = $create->create_link('Add contact');
 
         $this->footer[] = new Pagination();
 
         $this->index = new Index([
             Stack::vertical([
-                new StringView('first_name'),
-                new StringView('last_name'),
+                StringView::create('first_name'),
+                StringView::create('last_name'),
             ])->set_header('Name'),
-            new StringView('email')
+            StringView::create('email')
                 ->set_link(function ($row) {
                     return "mailto:$row->email";
                 }),
-            new StringView('phone'),
+            StringView::create('phone'),
+            EnumView::create('language')
+                ->set_options($language_options),
+            DateView::create("created")->set_format("d/m/Y H:i"),
+            DateView::create("updated")->set_format("d/m/Y H:i"),
             $this->edit->create_link(),
             $delete->create_link(),
         ]);
 
+        $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
+        $this->index->filters[] = new EnumFilter("language", $language_options, ["title" => "Languages"]);
+
         $this->index->sorter = new StaticSorter('last_name', StaticSorter::ASC);
+        $this->index->searcher = new LikeSearcher((new $model())->getSearchFields());
     }
 }

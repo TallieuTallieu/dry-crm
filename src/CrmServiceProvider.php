@@ -66,11 +66,13 @@ class CrmServiceProvider extends ServiceProvider
 
         $modules = [
             new OrganisationManager([
-                'model' => $organisationModel
+                'model' => $organisationModel,
+                'contact_model' => $contactModel,
             ]),
             new ContactManager([
-                "language_options" => $languageOptions,
-                'model' => $contactModel
+                'model' => $contactModel,
+                'organisation_model' => $organisationModel,
+                'language_options' => $languageOptions,
             ]),
             new CountryManager(),
         ];

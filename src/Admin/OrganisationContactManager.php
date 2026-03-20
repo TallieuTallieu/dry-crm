@@ -13,6 +13,7 @@ use dry\orm\component\ForeignKeyIndexPicker;
 use dry\orm\component\Pagination;
 use dry\orm\Index;
 use dry\orm\Manager;
+use dry\orm\search\LikeSearcher;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Organisation;
 use Tnt\Crm\Model\OrganisationContact;
@@ -24,17 +25,20 @@ class OrganisationContactManager extends Manager
     public function __construct(Organisation|Contact $relatedModel, array $kwargs = [])
     {
         $model = OrganisationContact::class;
+        $reference_model = null;
         extract($kwargs, EXTR_IF_EXISTS);
 
         $title = '';
         $foreignKey = '';
         $foreignKeyColumn = '';
+        $foreignKeyIndexName = '';
 
         if ($relatedModel instanceof Organisation) {
             $title = 'contact';
             $foreignKey = 'contact';
             $foreignKeyColumn = 'first_name';
             $foreignKeyIndexName = 'Contact';
+            $reference_model = $reference_model ?? new Contact();
         }
 
         if ($relatedModel instanceof Contact) {
@@ -42,6 +46,7 @@ class OrganisationContactManager extends Manager
             $foreignKey = 'organisation';
             $foreignKeyColumn = 'name';
             $foreignKeyIndexName = 'Organisation';
+            $reference_model = $reference_model ?? new Organisation();
         }
 
         /**
@@ -54,9 +59,11 @@ class OrganisationContactManager extends Manager
 
         $this->actions[] = $create = new Create(
             [
-                ForeignKeyIndexPicker::create($foreignKey)->set_components([
-                    new StringView($foreignKeyColumn),
-                ]),
+                ForeignKeyIndexPicker::create($foreignKey)
+                    ->set_components([
+                        new StringView($foreignKeyColumn),
+                    ])
+                    ->set_searcher(new LikeSearcher($reference_model->getSearchFields())),
                 StringEdit::create('function')
                     ->set_label('Function'),
             ],
@@ -81,7 +88,5 @@ class OrganisationContactManager extends Manager
             $edit->create_link(),
             $delete->create_link(),
         ]);
-
-        // $this->index->sorter = new StaticSorter('name', StaticSorter::ASC);
     }
 }
