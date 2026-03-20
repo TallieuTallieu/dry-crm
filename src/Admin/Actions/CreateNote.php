@@ -10,6 +10,7 @@ use dry\expr\Field;
 use dry\expr\Literal;
 use dry\expr\Or_;
 use dry\orm\action\Edit;
+use dry\orm\Manager;
 
 class CreateNote extends Edit
 {
@@ -27,6 +28,13 @@ class CreateNote extends Edit
     public static function getNoteComponent(): StringEdit
     {
         return StringEdit::create('note')->set_multiline();
+    }
+
+    public static function register(Manager $manager): array
+    {
+        $manager->actions[] = $create_note = new self();
+        $manager->actions[] = $edit_note = new self(true);
+        return ['create' => $create_note, 'edit' => $edit_note];
     }
 
     public static function renderTableActions(self $create_note, self $edit_note): Conditional

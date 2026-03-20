@@ -9,7 +9,6 @@ use dry\admin\component\TabbedContent;
 use dry\orm\action\Create;
 use dry\orm\action\Delete;
 use dry\orm\action\Edit;
-use dry\orm\component\ForeignKeyIndexPicker;
 use dry\orm\component\InlineManager;
 use dry\orm\component\Pagination;
 use dry\orm\component\Search;
@@ -56,28 +55,7 @@ class OrganisationManager extends Manager
                 ->set_label('Email'),
             StringEdit::create('phone')
                 ->set_label('Phone'),
-            Stack::vertical([
-                Stack::horizontal([
-                    StringEdit::create('address_street')
-                        ->set_label('Street'),
-                    StringEdit::create('address_number')
-                        ->set_label('Number'),
-                ])
-                    ->set_grid([5, 3]),
-                Stack::horizontal([
-                    StringEdit::create('address_postal_code')
-                        ->set_label('Postal code'),
-                    StringEdit::create('address_city')
-                        ->set_label('City'),
-                ])
-                    ->set_grid([3, 5]),
-                ForeignKeyIndexPicker::create("country")
-                    ->set_components([
-                        StringView::create('name')
-                    ])
-                    ->set_plural('countries')
-                    ->set_label('Country'),
-            ])->set_title("Address"),
+            Country::addressComponents(),
         ];
 
         $this->actions[] = $create = new Create($generalComponents, [
@@ -106,8 +84,7 @@ class OrganisationManager extends Manager
             ])->set_grid([5, 2]),
         ]);
 
-        $this->actions[] = $create_note = new CreateNote();
-        $this->actions[] = $edit_note = new CreateNote(true);
+        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register($this);
 
         $this->actions[] = $delete = new Delete();
 

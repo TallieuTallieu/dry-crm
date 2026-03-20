@@ -78,8 +78,7 @@ class OrganisationContactManager extends Manager
             'popup' => true,
         ]);
 
-        $this->actions[] = $create_note = new CreateNote();
-        $this->actions[] = $edit_note = new CreateNote(true);
+        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register($this);
 
         $this->actions[] = $delete = new Delete();
 
