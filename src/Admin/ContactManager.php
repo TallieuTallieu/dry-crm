@@ -21,6 +21,7 @@ use dry\orm\Index;
 use dry\orm\Manager;
 use dry\orm\search\LikeSearcher;
 use dry\orm\sort\StaticSorter;
+use Tnt\Crm\Admin\Actions\CreateNote;
 use Tnt\Crm\Enum\Language;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
@@ -84,8 +85,6 @@ class ContactManager extends Manager
                     ->set_plural('countries')
                     ->set_label('Country'),
             ])->set_title('Address'),
-            StringEdit::create('note')
-                ->set_label('Note'),
         ];
 
         $this->actions[] = $create = new Create($generalComponents, [
@@ -97,10 +96,16 @@ class ContactManager extends Manager
                 InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $organisation_model()]))
                     ->set_foreign_key('contact'),
                 Stack::vertical([
-                    ...$generalComponents
-                ])->enable_background(),
+                    Stack::vertical([
+                        ...$generalComponents
+                    ])->enable_background(),
+                    CreateNote::getNoteComponent(),
+                ]),
             ])->set_grid([5, 2]),
         ]);
+
+        $this->actions[] = $create_note = new CreateNote();
+        $this->actions[] = $edit_note = new CreateNote(true);
 
         $this->actions[] = $delete = new Delete();
 
@@ -123,6 +128,7 @@ class ContactManager extends Manager
                 ->set_options($language_options),
             DateView::create("created")->set_format("d/m/Y H:i"),
             DateView::create("updated")->set_format("d/m/Y H:i"),
+            CreateNote::renderTableActions($create_note, $edit_note),
             $this->edit->create_link(),
             $delete->create_link(),
         ]);
