@@ -31,6 +31,8 @@ The following values can be set in your config under the `crm` key:
 | `crm.organisation_model` | `Tnt\Crm\Model\Organisation::class` | Model class to use for organisations |
 | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` | Model class to use for contacts |
 | `crm.language_options` | `Language::enum()` (nl, fr, en, de) | Options for the language field, array of `[value, label]` pairs |
+| `crm.contact_extra_tabs` | `[]` | Extra tabs to add to the contact edit view, keyed by tab label |
+| `crm.organisation_extra_tabs` | `[]` | Extra tabs to add to the organisation edit view, keyed by tab label |
 
 Example:
 
@@ -41,6 +43,18 @@ Example:
     'language_options' => [
         ['nl', 'Dutch'],
         ['fr', 'French'],
+    ],
+    'contact_extra_tabs' => [
+        'My Tab' => [
+            \dry\orm\component\InlineManager::create(new \App\Admin\SomeManager())
+                ->set_foreign_key('contact'),
+        ],
+    ],
+    'organisation_extra_tabs' => [
+        'My Tab' => [
+            \dry\orm\component\InlineManager::create(new \App\Admin\SomeManager())
+                ->set_foreign_key('organisation'),
+        ],
     ],
 ],
 ```
