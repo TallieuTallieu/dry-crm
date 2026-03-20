@@ -28,6 +28,7 @@ The following values can be set in your config under the `crm` key:
 
 | Key | Default | Description |
 |-----|---------|-------------|
+| `crm.extra_modules` | `[]` | Extra admin modules (managers) to register in the CRM portal |
 | `crm.organisation_model` | `Tnt\Crm\Model\Organisation::class` | Model class to use for organisations |
 | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` | Model class to use for contacts |
 | `crm.language_options` | `Language::enum()` (nl, fr, en, de) | Options for the language field, array of `[value, label]` pairs |
@@ -72,6 +73,9 @@ Example:
     ],
     'organisation_sort_field' => 'name',
     'organisation_sort_direction' => \dry\orm\sort\StaticSorter::ASC,
+    'extra_modules' => [
+        new \App\Admin\CustomManager(),
+    ],
 ],
 ```
 

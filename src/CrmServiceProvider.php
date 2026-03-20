@@ -83,6 +83,7 @@ class CrmServiceProvider extends ServiceProvider
                 'sort_direction' => $config->get('crm.contact_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]),
             new CountryManager(),
+            ...$config->get('crm.extra_modules', []),
         ];
 
         return new Portal('crm', 'CRM', $modules, [
