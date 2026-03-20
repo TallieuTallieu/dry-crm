@@ -56,12 +56,22 @@ Example:
                 ->set_foreign_key('contact'),
         ],
     ],
+    'contact_extra_filters' => [
+        new \dry\orm\filter\EnumFilter('type', \App\Enum\ContactType::enum(), ['title' => 'Type']),
+    ],
+    'contact_sort_field' => 'first_name',
+    'contact_sort_direction' => \dry\orm\sort\StaticSorter::ASC,
     'organisation_extra_tabs' => [
         'My Tab' => [
             \dry\orm\component\InlineManager::create(new \App\Admin\SomeManager())
                 ->set_foreign_key('organisation'),
         ],
     ],
+    'organisation_extra_filters' => [
+        new \dry\orm\filter\EnumFilter('type', \App\Enum\OrganisationType::enum(), ['title' => 'Type']),
+    ],
+    'organisation_sort_field' => 'name',
+    'organisation_sort_direction' => \dry\orm\sort\StaticSorter::ASC,
 ],
 ```
 
