@@ -3,6 +3,7 @@
 namespace Tnt\Crm\Model;
 
 use dry\orm\Model;
+use Tnt\Crm\Contracts\SearchableInterface;
 use Tnt\Crm\Model\Country;
 
 /**
@@ -21,7 +22,7 @@ use Tnt\Crm\Model\Country;
  * @property string|null $phone
  * @property string|null $note
  */
-class Organisation extends Model
+class Organisation extends Model implements SearchableInterface
 {
     const TABLE = 'crm_organisation';
 
@@ -39,6 +40,20 @@ class Organisation extends Model
     public function get_address_postal_code_and_country()
     {
         return "{$this->address_postal_code} {$this->country?->name}";
+    }
+
+    public function getSearchFields(): array
+    {
+        return [
+            'name',
+            'email',
+            'phone',
+            'website',
+            'vat',
+            'address_city',
+            'address_street',
+            'address_number',
+        ];
     }
 
     public function __toString()

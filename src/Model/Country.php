@@ -14,6 +14,13 @@ class Country extends Model
 
     static $special_fields = [];
 
+    public static function enum(): array
+    {
+        return array_map(function ($row) {
+            return [$row->id, $row->name];
+        }, self::all()->to_array());
+    }
+
     public function __toString()
     {
         return $this->name;

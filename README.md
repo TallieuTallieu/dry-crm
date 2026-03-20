@@ -46,3 +46,31 @@ Example:
 ```
 
 > You can also pass the result of an Enum: `\App\Enum\Language::enum()`
+
+## Extending models
+
+Custom models passed via `crm.organisation_model` or `crm.contact_model` **must extend the base model class**. This is required because the admin managers use `instanceof` checks to determine the relationship direction.
+
+```php
+// ✓ Correct — extends the base class
+class Organisation extends \Tnt\Crm\Model\Organisation
+{
+}
+
+// ✗ Wrong — does not extend the base class, will throw a TypeError
+class Organisation extends \dry\orm\Model
+{
+}
+```
+
+The default models already implement `SearchableInterface`. If your custom model overrides `getSearchFields()`, that version will be used for search:
+
+```php
+class Organisation extends \Tnt\Crm\Model\Organisation
+{
+    public function getSearchFields(): array
+    {
+        return ['name', 'email', 'phone'];
+    }
+}
+```
