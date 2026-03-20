@@ -14,6 +14,7 @@ use dry\orm\component\Pagination;
 use dry\orm\Index;
 use dry\orm\Manager;
 use dry\orm\search\LikeSearcher;
+use Tnt\Crm\Admin\Actions\CreateNote;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Organisation;
 use Tnt\Crm\Model\OrganisationContact;
@@ -66,6 +67,7 @@ class OrganisationContactManager extends Manager
                     ->set_searcher(new LikeSearcher($reference_model->getSearchFields())),
                 StringEdit::create('function')
                     ->set_label('Function'),
+                CreateNote::getNoteComponent()
             ],
             [
                 'popup' => true,
@@ -76,6 +78,9 @@ class OrganisationContactManager extends Manager
             'popup' => true,
         ]);
 
+        $this->actions[] = $create_note = new CreateNote();
+        $this->actions[] = $edit_note = new CreateNote(true);
+
         $this->actions[] = $delete = new Delete();
 
         $this->header[] = $create->create_link("Add $title");
@@ -85,6 +90,7 @@ class OrganisationContactManager extends Manager
         $this->index = new Index([
             Foreign::create($foreignKey, new StringView($foreignKeyColumn), ["header" => $foreignKeyIndexName]),
             StringView::create("function")->set_header("Function"),
+            CreateNote::renderTableActions($create_note, $edit_note),
             $edit->create_link(),
             $delete->create_link(),
         ]);

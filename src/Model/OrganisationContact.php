@@ -7,6 +7,8 @@ use dry\orm\Model;
 /**
  * @property int $contact
  * @property int $organisation
+ * @property string|null $note
+ * @property string $function
  */
 class OrganisationContact extends Model
 {

@@ -17,6 +17,7 @@ use dry\orm\Index;
 use dry\orm\Manager;
 use dry\orm\search\LikeSearcher;
 use dry\orm\sort\StaticSorter;
+use Tnt\Crm\Admin\Actions\CreateNote;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
 use Tnt\Crm\Model\Organisation;
@@ -83,10 +84,16 @@ class OrganisationManager extends Manager
                 InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $contact_model()]))
                     ->set_foreign_key('organisation'),
                 Stack::vertical([
-                    ...$generalComponents
-                ])->set_title("Organisation Settings"),
+                    Stack::vertical([
+                        ...$generalComponents
+                    ])->set_title("Organisation Settings"),
+                    CreateNote::getNoteComponent()
+                ]),
             ])->set_grid([5, 2]),
         ]);
+
+        $this->actions[] = $create_note = new CreateNote();
+        $this->actions[] = $edit_note = new CreateNote(true);
 
         $this->actions[] = $delete = new Delete();
 
@@ -113,6 +120,7 @@ class OrganisationManager extends Manager
                 StringView::create('address_street_and_number'),
                 StringView::create('address_postal_code_and_country'),
             ])->set_header('Address'),
+            CreateNote::renderTableActions($create_note, $edit_note),
             $this->edit->create_link(),
             $delete->create_link(),
         ]);
