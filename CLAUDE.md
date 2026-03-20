@@ -51,22 +51,36 @@ src/
 ### Language enum
 `Language::enum()` returns `[['nl', 'Dutch'], ['fr', 'French'], ...]`. The language options in `ContactManager` can be overridden via `crm.language_options` config or a custom `language_options` kwarg.
 
-## Configuration keys (`crm.*`)
+## Configuration file
 
-| Key | Default |
-|-----|---------|
-| `crm.extra_modules` | `[]` |
-| `crm.organisation_model` | `Tnt\Crm\Model\Organisation::class` |
-| `crm.contact_model` | `Tnt\Crm\Model\Contact::class` |
-| `crm.language_options` | `Language::enum()` |
-| `crm.contact_extra_tabs` | `[]` |
-| `crm.contact_extra_filters` | `[]` |
-| `crm.contact_sort_field` | `'first_name'` |
-| `crm.contact_sort_direction` | `StaticSorter::ASC` |
-| `crm.organisation_extra_tabs` | `[]` |
-| `crm.organisation_extra_filters` | `[]` |
-| `crm.organisation_sort_field` | `'name'` |
-| `crm.organisation_sort_direction` | `StaticSorter::ASC` |
+In the consuming project, config lives at `config/crm.php` in the project root. It returns a flat array — keys are the bare key names (without the `crm.` prefix):
+
+```php
+// config/crm.php
+return [
+    'organisation_model' => MyOrganisation::class,
+    'extra_modules' => [...],
+];
+```
+
+## Configuration keys
+
+Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider reads them as `crm.<key>` via Oak's dot-notation config.
+
+| Key in file | Service provider reads as | Default |
+|-------------|--------------------------|---------|
+| `extra_modules` | `crm.extra_modules` | `[]` |
+| `organisation_model` | `crm.organisation_model` | `Tnt\Crm\Model\Organisation::class` |
+| `contact_model` | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` |
+| `language_options` | `crm.language_options` | `Language::enum()` |
+| `contact_extra_tabs` | `crm.contact_extra_tabs` | `[]` |
+| `contact_extra_filters` | `crm.contact_extra_filters` | `[]` |
+| `contact_sort_field` | `crm.contact_sort_field` | `'first_name'` |
+| `contact_sort_direction` | `crm.contact_sort_direction` | `StaticSorter::ASC` |
+| `organisation_extra_tabs` | `crm.organisation_extra_tabs` | `[]` |
+| `organisation_extra_filters` | `crm.organisation_extra_filters` | `[]` |
+| `organisation_sort_field` | `crm.organisation_sort_field` | `'name'` |
+| `organisation_sort_direction` | `crm.organisation_sort_direction` | `StaticSorter::ASC` |
 
 ## Generating migrations
 

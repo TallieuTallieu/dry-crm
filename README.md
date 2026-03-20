@@ -24,27 +24,29 @@ $portal = $app->get(\Tnt\Crm\Contracts\CrmPortalInterface::class);
 
 ## Configuration
 
-The following values can be set in your config under the `crm` key:
+Create `config/crm.php` in your project root. The file returns a flat array — the `crm.` prefix is derived from the filename by Oak's config repository:
 
 | Key | Default | Description |
 |-----|---------|-------------|
-| `crm.extra_modules` | `[]` | Extra admin modules (managers) to register in the CRM portal |
-| `crm.organisation_model` | `Tnt\Crm\Model\Organisation::class` | Model class to use for organisations |
-| `crm.contact_model` | `Tnt\Crm\Model\Contact::class` | Model class to use for contacts |
-| `crm.language_options` | `Language::enum()` (nl, fr, en, de) | Options for the language field, array of `[value, label]` pairs |
-| `crm.contact_extra_tabs` | `[]` | Extra tabs to add to the contact edit view, keyed by tab label |
-| `crm.contact_extra_filters` | `[]` | Extra filters to add to the contact index |
-| `crm.contact_sort_field` | `'first_name'` | Field to sort the contact index by |
-| `crm.contact_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
-| `crm.organisation_extra_tabs` | `[]` | Extra tabs to add to the organisation edit view, keyed by tab label |
-| `crm.organisation_extra_filters` | `[]` | Extra filters to add to the organisation index |
-| `crm.organisation_sort_field` | `'name'` | Field to sort the organisation index by |
-| `crm.organisation_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
+| `extra_modules` | `[]` | Extra admin modules (managers) to register in the CRM portal |
+| `organisation_model` | `Tnt\Crm\Model\Organisation::class` | Model class to use for organisations |
+| `contact_model` | `Tnt\Crm\Model\Contact::class` | Model class to use for contacts |
+| `language_options` | `Language::enum()` (nl, fr, en, de) | Options for the language field, array of `[value, label]` pairs |
+| `contact_extra_tabs` | `[]` | Extra tabs to add to the contact edit view, keyed by tab label |
+| `contact_extra_filters` | `[]` | Extra filters to add to the contact index |
+| `contact_sort_field` | `'first_name'` | Field to sort the contact index by |
+| `contact_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
+| `organisation_extra_tabs` | `[]` | Extra tabs to add to the organisation edit view, keyed by tab label |
+| `organisation_extra_filters` | `[]` | Extra filters to add to the organisation index |
+| `organisation_sort_field` | `'name'` | Field to sort the organisation index by |
+| `organisation_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
 
-Example:
+Example `config/crm.php`:
 
 ```php
-'crm' => [
+<?php
+
+return [
     'organisation_model' => \App\Model\Organisation::class,
     'contact_model' => \App\Model\Contact::class,
     'language_options' => [
@@ -76,7 +78,7 @@ Example:
     'extra_modules' => [
         new \App\Admin\CustomManager(),
     ],
-],
+];
 ```
 
 > You can also pass the result of an Enum: `\App\Enum\Language::enum()`
