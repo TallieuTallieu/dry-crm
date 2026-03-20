@@ -32,6 +32,9 @@ class OrganisationManager extends Manager
         $model = Organisation::class;
         $contact_model = Contact::class;
         $extra_tabs = [];
+        $extra_filters = [];
+        $sort_field = 'name';
+        $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
 
         parent::__construct($model, [
@@ -138,7 +141,11 @@ class OrganisationManager extends Manager
 
         $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
 
-        $this->index->sorter = new StaticSorter('name', StaticSorter::ASC);
+        foreach ($extra_filters as $filter) {
+            $this->index->filters[] = $filter;
+        }
+
+        $this->index->sorter = new StaticSorter($sort_field, $sort_direction);
         $this->index->searcher = new LikeSearcher((new $model())->getSearchFields());
     }
 }

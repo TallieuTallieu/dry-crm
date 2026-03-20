@@ -59,7 +59,13 @@ src/
 | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` |
 | `crm.language_options` | `Language::enum()` |
 | `crm.contact_extra_tabs` | `[]` |
+| `crm.contact_extra_filters` | `[]` |
+| `crm.contact_sort_field` | `'first_name'` |
+| `crm.contact_sort_direction` | `StaticSorter::ASC` |
 | `crm.organisation_extra_tabs` | `[]` |
+| `crm.organisation_extra_filters` | `[]` |
+| `crm.organisation_sort_field` | `'name'` |
+| `crm.organisation_sort_direction` | `StaticSorter::ASC` |
 
 ## Generating migrations
 

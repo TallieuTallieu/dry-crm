@@ -69,12 +69,18 @@ class CrmServiceProvider extends ServiceProvider
                 'model' => $organisationModel,
                 'contact_model' => $contactModel,
                 'extra_tabs' => $config->get('crm.organisation_extra_tabs', []),
+                'extra_filters' => $config->get('crm.organisation_extra_filters', []),
+                'sort_field' => $config->get('crm.organisation_sort_field', 'name'),
+                'sort_direction' => $config->get('crm.organisation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]),
             new ContactManager([
                 'model' => $contactModel,
                 'organisation_model' => $organisationModel,
                 'language_options' => $languageOptions,
                 'extra_tabs' => $config->get('crm.contact_extra_tabs', []),
+                'extra_filters' => $config->get('crm.contact_extra_filters', []),
+                'sort_field' => $config->get('crm.contact_sort_field', 'first_name'),
+                'sort_direction' => $config->get('crm.contact_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]),
             new CountryManager(),
         ];
