@@ -32,7 +32,13 @@ The following values can be set in your config under the `crm` key:
 | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` | Model class to use for contacts |
 | `crm.language_options` | `Language::enum()` (nl, fr, en, de) | Options for the language field, array of `[value, label]` pairs |
 | `crm.contact_extra_tabs` | `[]` | Extra tabs to add to the contact edit view, keyed by tab label |
+| `crm.contact_extra_filters` | `[]` | Extra filters to add to the contact index |
+| `crm.contact_sort_field` | `'first_name'` | Field to sort the contact index by |
+| `crm.contact_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
 | `crm.organisation_extra_tabs` | `[]` | Extra tabs to add to the organisation edit view, keyed by tab label |
+| `crm.organisation_extra_filters` | `[]` | Extra filters to add to the organisation index |
+| `crm.organisation_sort_field` | `'name'` | Field to sort the organisation index by |
+| `crm.organisation_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
 
 Example:
 

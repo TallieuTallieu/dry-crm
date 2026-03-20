@@ -38,6 +38,9 @@ class ContactManager extends Manager
         $language_options = Language::enum();
         $organisation_model = Organisation::class;
         $extra_tabs = [];
+        $extra_filters = [];
+        $sort_field = 'first_name';
+        $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
 
         parent::__construct($model, [
@@ -147,7 +150,11 @@ class ContactManager extends Manager
         $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
         $this->index->filters[] = new EnumFilter("language", $language_options, ["title" => "Languages"]);
 
-        $this->index->sorter = new StaticSorter('last_name', StaticSorter::ASC);
+        foreach ($extra_filters as $filter) {
+            $this->index->filters[] = $filter;
+        }
+
+        $this->index->sorter = new StaticSorter($sort_field, $sort_direction);
         $this->index->searcher = new LikeSearcher((new $model())->getSearchFields());
     }
 }
