@@ -68,11 +68,13 @@ class CrmServiceProvider extends ServiceProvider
             new OrganisationManager([
                 'model' => $organisationModel,
                 'contact_model' => $contactModel,
+                'extra_tabs' => $config->get('crm.organisation_extra_tabs', []),
             ]),
             new ContactManager([
                 'model' => $contactModel,
                 'organisation_model' => $organisationModel,
                 'language_options' => $languageOptions,
+                'extra_tabs' => $config->get('crm.contact_extra_tabs', []),
             ]),
             new CountryManager(),
         ];

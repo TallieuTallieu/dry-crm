@@ -5,6 +5,7 @@ namespace Tnt\Crm\Admin;
 use dry\admin\component\Stack;
 use dry\admin\component\StringEdit;
 use dry\admin\component\StringView;
+use dry\admin\component\TabbedContent;
 use dry\orm\action\Create;
 use dry\orm\action\Delete;
 use dry\orm\action\Edit;
@@ -30,6 +31,7 @@ class OrganisationManager extends Manager
     {
         $model = Organisation::class;
         $contact_model = Contact::class;
+        $extra_tabs = [];
         extract($kwargs, EXTR_IF_EXISTS);
 
         parent::__construct($model, [
@@ -79,10 +81,19 @@ class OrganisationManager extends Manager
             'popup' => true,
         ]);
 
-        $this->actions[] = $this->edit = new Edit([
-            Stack::horizontal([
+        $editContent = TabbedContent::create()
+            ->add_tab("Contacts", [
                 InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $contact_model()]))
                     ->set_foreign_key('organisation'),
+            ]);
+
+        foreach ($extra_tabs as $label => $components) {
+            $editContent->add_tab($label, $components);
+        }
+
+        $this->actions[] = $this->edit = new Edit([
+            Stack::horizontal([
+                $editContent,
                 Stack::vertical([
                     Stack::vertical([
                         ...$generalComponents

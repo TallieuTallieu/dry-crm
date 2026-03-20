@@ -8,6 +8,7 @@ use dry\admin\component\EnumView;
 use dry\admin\component\Stack;
 use dry\admin\component\StringEdit;
 use dry\admin\component\StringView;
+use dry\admin\component\TabbedContent;
 use dry\admin\Module;
 use dry\orm\action\Create;
 use dry\orm\action\Delete;
@@ -36,6 +37,7 @@ class ContactManager extends Manager
         $model = Contact::class;
         $language_options = Language::enum();
         $organisation_model = Organisation::class;
+        $extra_tabs = [];
         extract($kwargs, EXTR_IF_EXISTS);
 
         parent::__construct($model, [
@@ -91,10 +93,19 @@ class ContactManager extends Manager
             'popup' => true,
         ]);
 
+        $editContent = TabbedContent::create()
+            ->add_tab("Organisations", [
+                InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $organisation_model()]))
+                    ->set_foreign_key('contact')
+            ]);
+
+        foreach ($extra_tabs as $label => $components) {
+            $editContent->add_tab($label, $components);
+        }
+
         $this->actions[] = $this->edit = new Edit([
             Stack::horizontal([
-                InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $organisation_model()]))
-                    ->set_foreign_key('contact'),
+                $editContent,
                 Stack::vertical([
                     Stack::vertical([
                         ...$generalComponents
