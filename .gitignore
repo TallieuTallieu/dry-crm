@@ -1,0 +1,7 @@
+.idea
+.DS_Store
+
+/vendor/
+.wakatime-project
+node_modules
+.yarn
