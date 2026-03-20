@@ -55,6 +55,7 @@ src/
 
 | Key | Default |
 |-----|---------|
+| `crm.extra_modules` | `[]` |
 | `crm.organisation_model` | `Tnt\Crm\Model\Organisation::class` |
 | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` |
 | `crm.language_options` | `Language::enum()` |
