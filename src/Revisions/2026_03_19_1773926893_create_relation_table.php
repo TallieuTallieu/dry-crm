@@ -7,12 +7,12 @@ use Tnt\Dbi\TableBuilder;
 
 return new class extends DatabaseRevision implements RevisionInterface {
     /**
-     * Create crm_organisation table
+     * Create crm_relation table
      */
     public function up(): void
     {
         $this->queryBuilder
-            ->table('crm_organisation')
+            ->table('crm_relation')
             ->create(function (TableBuilder $table): void {
                 $table->id();
                 $table->timestamps();
@@ -35,11 +35,11 @@ return new class extends DatabaseRevision implements RevisionInterface {
     }
 
     /**
-     * Drop crm_organisation table
+     * Drop crm_relation table
      */
     public function down(): void
     {
-        $this->queryBuilder->table('crm_organisation')->drop();
+        $this->queryBuilder->table('crm_relation')->drop();
 
         $this->execute();
     }
@@ -49,7 +49,7 @@ return new class extends DatabaseRevision implements RevisionInterface {
      */
     public function describeUp(): string
     {
-        return 'Create crm_organisation table';
+        return 'Create crm_relation table';
     }
 
     /**
@@ -57,6 +57,6 @@ return new class extends DatabaseRevision implements RevisionInterface {
      */
     public function describeDown(): string
     {
-        return 'Drop crm_organisation table';
+        return 'Drop crm_relation table';
     }
 };

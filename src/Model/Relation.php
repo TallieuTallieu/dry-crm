@@ -22,9 +22,9 @@ use Tnt\Crm\Model\Country;
  * @property string|null $phone
  * @property string|null $note
  */
-class Organisation extends Model implements SearchableInterface
+class Relation extends Model implements SearchableInterface
 {
-    const TABLE = 'crm_organisation';
+    const TABLE = 'crm_relation';
 
     static $special_fields = [
         "country" => Country::class

@@ -10,7 +10,7 @@ use Tnt\Crm\Model\Country;
  * @property int|null $id
  * @property string $created
  * @property string $updated
- * @property int|null $organisation_id
+ * @property int|null $relation_id
  * @property string $first_name
  * @property string $last_name
  * @property string|null $language

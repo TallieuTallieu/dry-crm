@@ -6,16 +6,16 @@ use dry\orm\Model;
 
 /**
  * @property int $contact
- * @property int $organisation
+ * @property int $relation
  * @property string|null $note
  * @property string $function
  */
-class OrganisationContact extends Model
+class RelationContact extends Model
 {
-    const TABLE = 'crm_contact_organisation';
+    const TABLE = 'crm_contact_relation';
 
     static $special_fields = [
         "contact" => Contact::class,
-        "organisation" => Organisation::class,
+        "relation" => Relation::class,
     ];
 }

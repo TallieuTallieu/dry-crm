@@ -7,19 +7,19 @@ use Tnt\Dbi\TableBuilder;
 
 return new class extends DatabaseRevision implements RevisionInterface {
     /**
-     * Create crm_contact_organisation pivot table
+     * Create crm_contact_relation pivot table
      */
     public function up(): void
     {
         $this->queryBuilder
-            ->table('crm_contact_organisation')
+            ->table('crm_contact_relation')
             ->create(function (TableBuilder $table): void {
                 $table->id();
                 $table->timestamps();
                 $table->addColumn('contact', 'int')->length(11);
-                $table->addColumn('organisation', 'int')->length(11);
+                $table->addColumn('relation', 'int')->length(11);
                 $table->addForeignKey('contact', 'crm_contact');
-                $table->addForeignKey('organisation', 'crm_organisation');
+                $table->addForeignKey('relation', 'crm_relation');
                 $table->addColumn('note', 'text')->null();
                 $table->addColumn('function', 'varchar')->length(255)->null();
             });
@@ -28,11 +28,11 @@ return new class extends DatabaseRevision implements RevisionInterface {
     }
 
     /**
-     * Drop crm_contact_organisation pivot table
+     * Drop crm_contact_relation pivot table
      */
     public function down(): void
     {
-        $this->queryBuilder->table('crm_contact_organisation')->drop();
+        $this->queryBuilder->table('crm_contact_relation')->drop();
 
         $this->execute();
     }
@@ -42,7 +42,7 @@ return new class extends DatabaseRevision implements RevisionInterface {
      */
     public function describeUp(): string
     {
-        return 'Create crm_contact_organisation pivot table';
+        return 'Create crm_contact_relation pivot table';
     }
 
     /**
@@ -50,6 +50,6 @@ return new class extends DatabaseRevision implements RevisionInterface {
      */
     public function describeDown(): string
     {
-        return 'Drop crm_contact_organisation pivot table';
+        return 'Drop crm_contact_relation pivot table';
     }
 };
