@@ -32,6 +32,8 @@ class RelationManager extends Manager
         $contact_model = Contact::class;
         $extra_tabs = [];
         $extra_filters = [];
+        $extra_header_actions = [];
+        $general_components = null;
         $sort_field = 'name';
         $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
@@ -42,7 +44,7 @@ class RelationManager extends Manager
             'plural' => 'relations',
         ]);
 
-        $generalComponents = [
+        $generalComponents = $general_components ?? [
             StringEdit::create('name')
                 ->set_label('Relation Name')
                 ->set_required(),
@@ -90,6 +92,10 @@ class RelationManager extends Manager
 
         $this->header[] = new Search();
         $this->header[] = $create->create_link('Add relation');
+
+        foreach ($extra_header_actions as $headerItem) {
+            $this->header[] = $headerItem;
+        }
 
         $this->footer[] = new Pagination();
 

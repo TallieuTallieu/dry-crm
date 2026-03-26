@@ -70,6 +70,8 @@ class CrmServiceProvider extends ServiceProvider
                 'contact_model' => $contactModel,
                 'extra_tabs' => $config->get('crm.relation_extra_tabs', []),
                 'extra_filters' => $config->get('crm.relation_extra_filters', []),
+                'extra_header_actions' => $config->get('crm.relation_extra_header_actions', []),
+                'general_components' => $config->get('crm.relation_general_components', null),
                 'sort_field' => $config->get('crm.relation_sort_field', 'name'),
                 'sort_direction' => $config->get('crm.relation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]),
