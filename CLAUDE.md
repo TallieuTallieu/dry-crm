@@ -79,6 +79,8 @@ Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider rea
 | `contact_sort_direction` | `crm.contact_sort_direction` | `StaticSorter::ASC` |
 | `relation_extra_tabs` | `crm.relation_extra_tabs` | `[]` |
 | `relation_extra_filters` | `crm.relation_extra_filters` | `[]` |
+| `relation_extra_header_actions` | `crm.relation_extra_header_actions` | `[]` |
+| `relation_general_components` | `crm.relation_general_components` | `null` |
 | `relation_sort_field` | `crm.relation_sort_field` | `'name'` |
 | `relation_sort_direction` | `crm.relation_sort_direction` | `StaticSorter::ASC` |
 

@@ -49,6 +49,8 @@ Create `config/crm.php` in your project root. The file returns a flat array — 
 | `contact_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
 | `relation_extra_tabs` | `[]` | Extra tabs to add to the relation edit view, keyed by tab label |
 | `relation_extra_filters` | `[]` | Extra filters to add to the relation index |
+| `relation_extra_header_actions` | `[]` | Extra items to append to the relation index header (after the "Add relation" button) |
+| `relation_general_components` | `null` | Override the default form fields for create/edit — replaces name, VAT, website, email, phone, address |
 | `relation_sort_field` | `'name'` | Field to sort the relation index by |
 | `relation_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
 
