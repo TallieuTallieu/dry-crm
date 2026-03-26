@@ -10,11 +10,11 @@ use Oak\Migration\Migrator;
 use Oak\ServiceProvider;
 use Tnt\Crm\Admin\ContactManager;
 use Tnt\Crm\Admin\CountryManager;
-use Tnt\Crm\Admin\OrganisationManager;
+use Tnt\Crm\Admin\RelationManager;
 use Tnt\Crm\Contracts\CrmPortalInterface;
 use Tnt\Crm\Enum\Language;
 use Tnt\Crm\Model\Contact;
-use Tnt\Crm\Model\Organisation;
+use Tnt\Crm\Model\Relation;
 
 class CrmServiceProvider extends ServiceProvider
 {
@@ -60,22 +60,22 @@ class CrmServiceProvider extends ServiceProvider
     {
         $config = $app->get(RepositoryInterface::class);
 
-        $organisationModel = $config->get('crm.organisation_model', Organisation::class);
+        $relationModel = $config->get('crm.relation_model', Relation::class);
         $contactModel = $config->get('crm.contact_model', Contact::class);
         $languageOptions = $config->get('crm.language_options', Language::enum());
 
         $modules = [
-            new OrganisationManager([
-                'model' => $organisationModel,
+            new RelationManager([
+                'model' => $relationModel,
                 'contact_model' => $contactModel,
-                'extra_tabs' => $config->get('crm.organisation_extra_tabs', []),
-                'extra_filters' => $config->get('crm.organisation_extra_filters', []),
-                'sort_field' => $config->get('crm.organisation_sort_field', 'name'),
-                'sort_direction' => $config->get('crm.organisation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
+                'extra_tabs' => $config->get('crm.relation_extra_tabs', []),
+                'extra_filters' => $config->get('crm.relation_extra_filters', []),
+                'sort_field' => $config->get('crm.relation_sort_field', 'name'),
+                'sort_direction' => $config->get('crm.relation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]),
             new ContactManager([
                 'model' => $contactModel,
-                'organisation_model' => $organisationModel,
+                'relation_model' => $relationModel,
                 'language_options' => $languageOptions,
                 'extra_tabs' => $config->get('crm.contact_extra_tabs', []),
                 'extra_filters' => $config->get('crm.contact_extra_filters', []),

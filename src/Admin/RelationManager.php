@@ -20,15 +20,15 @@ use dry\orm\sort\StaticSorter;
 use Tnt\Crm\Admin\Actions\CreateNote;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
-use Tnt\Crm\Model\Organisation;
+use Tnt\Crm\Model\Relation;
 
-class OrganisationManager extends Manager
+class RelationManager extends Manager
 {
     public $edit;
 
     public function __construct(array $kwargs = [])
     {
-        $model = Organisation::class;
+        $model = Relation::class;
         $contact_model = Contact::class;
         $extra_tabs = [];
         $extra_filters = [];
@@ -38,13 +38,13 @@ class OrganisationManager extends Manager
 
         parent::__construct($model, [
             'icon' => 'business_center',
-            'singular' => 'organisation',
-            'plural' => 'organisations',
+            'singular' => 'relation',
+            'plural' => 'relations',
         ]);
 
         $generalComponents = [
             StringEdit::create('name')
-                ->set_label('Organisation Name')
+                ->set_label('Relation Name')
                 ->set_required(),
             StringEdit::create('VAT')
                 ->set_label('VAT'),
@@ -64,8 +64,8 @@ class OrganisationManager extends Manager
 
         $editContent = TabbedContent::create()
             ->add_tab("Contacts", [
-                InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $contact_model()]))
-                    ->set_foreign_key('organisation'),
+                InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $contact_model()]))
+                    ->set_foreign_key('relation'),
             ]);
 
         foreach ($extra_tabs as $label => $components) {
@@ -78,7 +78,7 @@ class OrganisationManager extends Manager
                 Stack::vertical([
                     Stack::vertical([
                         ...$generalComponents
-                    ])->set_title("Organisation Settings"),
+                    ])->set_title("Relation Settings"),
                     CreateNote::getNoteComponent()
                 ]),
             ])->set_grid([5, 2]),
@@ -89,7 +89,7 @@ class OrganisationManager extends Manager
         $this->actions[] = $delete = new Delete();
 
         $this->header[] = new Search();
-        $this->header[] = $create->create_link('Add organisation');
+        $this->header[] = $create->create_link('Add relation');
 
         $this->footer[] = new Pagination();
 
@@ -100,7 +100,7 @@ class OrganisationManager extends Manager
                     ->set_link(function ($row) {
                         return $row->website;
                     }),
-            ])->set_header('Organisation'),
+            ])->set_header('Relation'),
             StringView::create('VAT'),
             StringView::create('email')
                 ->set_link(function ($row) {

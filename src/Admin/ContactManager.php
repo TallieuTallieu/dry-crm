@@ -25,7 +25,7 @@ use Tnt\Crm\Admin\Actions\CreateNote;
 use Tnt\Crm\Enum\Language;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
-use Tnt\Crm\Model\Organisation;
+use Tnt\Crm\Model\Relation;
 
 class ContactManager extends Manager
 {
@@ -35,7 +35,7 @@ class ContactManager extends Manager
     {
         $model = Contact::class;
         $language_options = Language::enum();
-        $organisation_model = Organisation::class;
+        $relation_model = Relation::class;
         $extra_tabs = [];
         $extra_filters = [];
         $sort_field = 'first_name';
@@ -75,8 +75,8 @@ class ContactManager extends Manager
         ]);
 
         $editContent = TabbedContent::create()
-            ->add_tab("Organisations", [
-                InlineManager::create(new OrganisationContactManager(new $model(), ['reference_model' => new $organisation_model()]))
+            ->add_tab("Relations", [
+                InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $relation_model()]))
                     ->set_foreign_key('contact')
             ]);
 

@@ -16,16 +16,16 @@ use dry\orm\Manager;
 use dry\orm\search\LikeSearcher;
 use Tnt\Crm\Admin\Actions\CreateNote;
 use Tnt\Crm\Model\Contact;
-use Tnt\Crm\Model\Organisation;
-use Tnt\Crm\Model\OrganisationContact;
+use Tnt\Crm\Model\Relation;
+use Tnt\Crm\Model\RelationContact;
 
-class OrganisationContactManager extends Manager
+class RelationContactManager extends Manager
 {
     public $edit;
 
-    public function __construct(Organisation|Contact $relatedModel, array $kwargs = [])
+    public function __construct(Relation|Contact $relatedModel, array $kwargs = [])
     {
-        $model = OrganisationContact::class;
+        $model = RelationContact::class;
         $reference_model = null;
         extract($kwargs, EXTR_IF_EXISTS);
 
@@ -34,7 +34,7 @@ class OrganisationContactManager extends Manager
         $foreignKeyColumn = '';
         $foreignKeyIndexName = '';
 
-        if ($relatedModel instanceof Organisation) {
+        if ($relatedModel instanceof Relation) {
             $title = 'contact';
             $foreignKey = 'contact';
             $foreignKeyColumn = 'first_name';
@@ -43,15 +43,15 @@ class OrganisationContactManager extends Manager
         }
 
         if ($relatedModel instanceof Contact) {
-            $title = 'organisation';
-            $foreignKey = 'organisation';
+            $title = 'relation';
+            $foreignKey = 'relation';
             $foreignKeyColumn = 'name';
-            $foreignKeyIndexName = 'Organisation';
-            $reference_model = $reference_model ?? new Organisation();
+            $foreignKeyIndexName = 'Relation';
+            $reference_model = $reference_model ?? new Relation();
         }
 
         /**
-         * @param Organisation|Contact $relatedModel
+         * @param Relation|Contact $relatedModel
          */
         parent::__construct($model, [
             'icon' => Module::ICON_PEOPLE,
