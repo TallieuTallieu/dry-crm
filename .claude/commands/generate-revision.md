@@ -6,7 +6,7 @@ The user may provide a revision name as an argument: `$ARGUMENTS`
 
 If no argument is provided, ask the user for the revision name.
 
-**Naming convention:** snake_case and prepend with timestamp `Y_m_d_timestamp_` (e.g., `CreateOrganisationTable`, `UpdateContactAddPhone`, `AddSlugToOrganisationTable`).
+**Naming convention:** snake_case and prepend with timestamp `Y_m_d_timestamp_` (e.g., `CreateRelationTable`, `UpdateContactAddPhone`, `AddSlugToRelationTable`).
 
 ### Steps
 
@@ -16,9 +16,9 @@ If no argument is provided, ask the user for the revision name.
    - Starts with `Add`, `Update`, `Alter`, `Modify`, `Remove`, `Drop` → use **alter** template
    - Default to **alter** template if unclear
 3. Extract the table name from the revision name:
-   - `CreateOrganisationTable` → `crm_organisation`
+   - `CreateRelationTable` → `crm_relation`
    - `UpdateContactAddPhone` → `crm_contact` (convert PascalCase to snake_case, drop trailing action words like `AddPhone`)
-   - `AddSlugToOrganisationTable` → `crm_organisation`
+   - `AddSlugToRelationTable` → `crm_relation`
    - Use your best judgment to extract the primary table name
 4. Generate descriptions:
    - **Create**: up = `Create {table} table`, down = `Drop {table} table`
