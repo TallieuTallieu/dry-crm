@@ -16,8 +16,10 @@ return new class extends DatabaseRevision implements RevisionInterface {
             ->create(function (TableBuilder $table): void {
                 $table->id();
                 $table->timestamps();
-                $table->addColumn('name', 'varchar')->length(255);
-                $table->addColumn('VAT', 'varchar')->length(255);
+                $table->addColumn('first_name', 'varchar')->length(255)->null();
+                $table->addColumn('last_name', 'varchar')->length(255)->null();
+                $table->addColumn('organisation_name', 'varchar')->length(255)->null();
+                $table->addColumn('VAT', 'varchar')->length(255)->null();
                 $table->addColumn('address_street', 'varchar')->length(255)->null();
                 $table->addColumn('address_number', 'varchar')->length(255)->null();
                 $table->addColumn('address_city', 'varchar')->length(100)->null();
