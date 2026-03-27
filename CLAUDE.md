@@ -44,6 +44,12 @@ src/
 ### SearchableInterface
 `Tnt\Crm\Contracts\SearchableInterface` enforces `getSearchFields(): array`. Both `Contact` and `Relation` implement it. Custom models passed via config must also implement it if search is needed.
 
+### Header actions
+
+`crm.relation_extra_header_actions` accepts an array of **class name strings**. The service provider instantiates each class and calls `->create_link()` on it. The resulting objects are appended to the relation index header after the "Add relation" button.
+
+If the object returned by `create_link()` has a non-null `action` property, that action is also registered on the manager (needed for the action to be reachable).
+
 ### Extra tabs
 
 `crm.contact_extra_tabs` and `crm.relation_extra_tabs` are associative arrays of `label => components[]` pairs appended to the `TabbedContent` in the respective edit views (after the default "Relations" / "Contacts" tab). Can also be passed directly as an `extra_tabs` kwarg when instantiating the manager.
@@ -83,6 +89,8 @@ Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider rea
 | `relation_general_components` | `crm.relation_general_components` | `null` |
 | `relation_sort_field` | `crm.relation_sort_field` | `'name'` |
 | `relation_sort_direction` | `crm.relation_sort_direction` | `StaticSorter::ASC` |
+| `contact_manager` | `crm.contact_manager` | `true` |
+| `country_manager` | `crm.country_manager` | `true` |
 
 ## Generating migrations
 
