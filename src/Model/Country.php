@@ -28,6 +28,7 @@ class Country extends Model
             Stack::horizontal([
                 StringEdit::create('address_postal_code')->set_label('Postal code'),
                 StringEdit::create('address_city')->set_label('City'),
+                StringEdit::create('address_box_number')->set_label('Box Number'),
             ])->set_grid([3, 5]),
             ForeignKeyIndexPicker::create('country')
                 ->set_components([StringView::create('name')])
