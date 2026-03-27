@@ -70,12 +70,18 @@ class CrmServiceProvider extends ServiceProvider
                 'contact_model' => $contactModel,
                 'extra_tabs' => $config->get('crm.relation_extra_tabs', []),
                 'extra_filters' => $config->get('crm.relation_extra_filters', []),
-                'extra_header_actions' => $config->get('crm.relation_extra_header_actions', []),
+                'extra_header_actions' => array_map(
+                    fn($class) => (new $class())->create_link(),
+                    $config->get('crm.relation_extra_header_actions', [])
+                ),
                 'general_components' => $config->get('crm.relation_general_components', null),
                 'sort_field' => $config->get('crm.relation_sort_field', 'name'),
                 'sort_direction' => $config->get('crm.relation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]),
-            new ContactManager([
+        ];
+
+        if ($config->get('crm.contact_manager', true)) {
+            $modules[] = new ContactManager([
                 'model' => $contactModel,
                 'relation_model' => $relationModel,
                 'language_options' => $languageOptions,
@@ -83,10 +89,14 @@ class CrmServiceProvider extends ServiceProvider
                 'extra_filters' => $config->get('crm.contact_extra_filters', []),
                 'sort_field' => $config->get('crm.contact_sort_field', 'first_name'),
                 'sort_direction' => $config->get('crm.contact_sort_direction', \dry\orm\sort\StaticSorter::ASC),
-            ]),
-            new CountryManager(),
-            ...$config->get('crm.extra_modules', []),
-        ];
+            ]);
+        }
+
+        if ($config->get('crm.country_manager', true)) {
+            $modules[] = new CountryManager();
+        }
+
+        $modules = array_merge($modules, $config->get('crm.extra_modules', []));
 
         return new Portal('crm', 'CRM', $modules, [
             "icon" => "account_tree",

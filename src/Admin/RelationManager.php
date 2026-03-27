@@ -94,6 +94,9 @@ class RelationManager extends Manager
         $this->header[] = $create->create_link('Add relation');
 
         foreach ($extra_header_actions as $headerItem) {
+            if (property_exists($headerItem, 'action') && $headerItem->action !== null) {
+                $this->actions[] = $headerItem->action;
+            }
             $this->header[] = $headerItem;
         }
 
