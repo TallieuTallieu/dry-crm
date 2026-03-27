@@ -10,10 +10,13 @@ use Tnt\Crm\Model\Country;
  * @property int|null $id
  * @property string $created
  * @property string $updated
- * @property string $name
- * @property string|null $VAT
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $organisation_name
+ * @property string|null $vat_number
  * @property string|null $address_street
  * @property string|null $address_number
+ * @property string|null $address_box_number
  * @property string|null $address_city
  * @property string|null $address_postal_code
  * @property int|null $country
@@ -45,11 +48,12 @@ class Relation extends Model implements SearchableInterface
     public function getSearchFields(): array
     {
         return [
-            'name',
+            'first_name',
+            'last_name',
             'email',
             'phone',
             'website',
-            'vat',
+            'vat_number',
             'address_city',
             'address_street',
             'address_number',
@@ -58,6 +62,7 @@ class Relation extends Model implements SearchableInterface
 
     public function __toString()
     {
-        return $this->name;
+        return trim(implode(' ', array_filter([$this->first_name, $this->last_name])))
+            ?: ($this->organisation_name ?? '');
     }
 }

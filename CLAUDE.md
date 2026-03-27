@@ -87,7 +87,7 @@ Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider rea
 | `relation_extra_filters` | `crm.relation_extra_filters` | `[]` |
 | `relation_extra_header_actions` | `crm.relation_extra_header_actions` | `[]` |
 | `relation_general_components` | `crm.relation_general_components` | `null` |
-| `relation_sort_field` | `crm.relation_sort_field` | `'name'` |
+| `relation_sort_field` | `crm.relation_sort_field` | `'last_name'` |
 | `relation_sort_direction` | `crm.relation_sort_direction` | `StaticSorter::ASC` |
 | `contact_manager` | `crm.contact_manager` | `true` |
 | `country_manager` | `crm.country_manager` | `true` |

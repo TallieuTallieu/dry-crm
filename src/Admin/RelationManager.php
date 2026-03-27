@@ -34,7 +34,7 @@ class RelationManager extends Manager
         $extra_filters = [];
         $extra_header_actions = [];
         $general_components = null;
-        $sort_field = 'name';
+        $sort_field = 'last_name';
         $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
 
@@ -45,11 +45,14 @@ class RelationManager extends Manager
         ]);
 
         $generalComponents = $general_components ?? [
-            StringEdit::create('name')
-                ->set_label('Relation Name')
-                ->set_required(),
-            StringEdit::create('VAT')
-                ->set_label('VAT'),
+            StringEdit::create('first_name')
+                ->set_label('First Name'),
+            StringEdit::create('last_name')
+                ->set_label('Last Name'),
+            StringEdit::create('organisation_name')
+                ->set_label('Organisation Name'),
+            StringEdit::create('vat_number')
+                ->set_label('VAT Number'),
             StringEdit::create('website')
                 ->set_tooltip('An URL should always start with <strong>https://</strong>')
                 ->set_label('Website'),
@@ -104,13 +107,17 @@ class RelationManager extends Manager
 
         $this->index = new Index([
             Stack::vertical([
-                StringView::create('name'),
+                Stack::horizontal([
+                    StringView::create('first_name'),
+                    StringView::create('last_name'),
+                    StringView::create('organisation_name'),
+                ]),
                 StringView::create('website')
                     ->set_link(function ($row) {
                         return $row->website;
                     }),
             ])->set_header('Relation'),
-            StringView::create('VAT'),
+            StringView::create('vat_number'),
             StringView::create('email')
                 ->set_link(function ($row) {
                     return "mailto:$row->email";

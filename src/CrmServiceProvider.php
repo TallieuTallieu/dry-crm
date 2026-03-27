@@ -75,7 +75,7 @@ class CrmServiceProvider extends ServiceProvider
                     $config->get('crm.relation_extra_header_actions', [])
                 ),
                 'general_components' => $config->get('crm.relation_general_components', null),
-                'sort_field' => $config->get('crm.relation_sort_field', 'name'),
+                'sort_field' => $config->get('crm.relation_sort_field', 'last_name'),
                 'sort_direction' => $config->get('crm.relation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]),
         ];
@@ -96,7 +96,7 @@ class CrmServiceProvider extends ServiceProvider
             $modules[] = new CountryManager();
         }
 
-        $modules = array_merge($modules, $config->get('crm.extra_modules', []));
+        $modules = array_merge($modules, array_map(fn($class) => new $class(), $config->get('crm.extra_modules', [])));
 
         return new Portal('crm', 'CRM', $modules, [
             "icon" => "account_tree",

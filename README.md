@@ -51,7 +51,7 @@ Create `config/crm.php` in your project root. The file returns a flat array — 
 | `relation_extra_filters` | `[]` | Extra filters to add to the relation index |
 | `relation_extra_header_actions` | `[]` | Array of class name strings to append to the relation index header. Each class is instantiated and `create_link()` is called; if the result has a non-null `action` property, that action is also registered on the manager. |
 | `relation_general_components` | `null` | Override the default form fields for create/edit — replaces first_name, last_name, organisation_name, vat_number, website, email, phone, address |
-| `relation_sort_field` | `'name'` | Field to sort the relation index by |
+| `relation_sort_field` | `'last_name'` | Field to sort the relation index by |
 | `relation_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
 | `contact_manager` | `true` | Set to `false` to exclude the ContactManager from the CRM portal |
 | `country_manager` | `true` | Set to `false` to exclude the CountryManager from the CRM portal |
