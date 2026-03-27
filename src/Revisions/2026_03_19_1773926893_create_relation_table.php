@@ -19,16 +19,17 @@ return new class extends DatabaseRevision implements RevisionInterface {
                 $table->addColumn('first_name', 'varchar')->length(255)->null();
                 $table->addColumn('last_name', 'varchar')->length(255)->null();
                 $table->addColumn('organisation_name', 'varchar')->length(255)->null();
-                $table->addColumn('VAT', 'varchar')->length(255)->null();
+                $table->addColumn('vat_number', 'varchar')->length(255)->null();
                 $table->addColumn('address_street', 'varchar')->length(255)->null();
                 $table->addColumn('address_number', 'varchar')->length(255)->null();
+                $table->addColumn('address_box_number', 'varchar')->length(255)->null();
                 $table->addColumn('address_city', 'varchar')->length(100)->null();
                 $table->addColumn('address_postal_code', 'varchar')->length(20)->null();
                 $table->addColumn('website', 'varchar')->length(255)->null();
                 $table->addColumn('email', 'varchar')->length(255)->null();
                 $table->addColumn('phone', 'varchar')->length(50)->null();
                 $table->addColumn('note', 'text')->null();
-
+                
                 $table->addColumn('country', 'int')->length(11)->null();
                 $table->addForeignKey('country', 'crm_country');
             });
