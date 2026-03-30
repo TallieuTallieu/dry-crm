@@ -44,6 +44,12 @@ src/
 ### SearchableInterface
 `Tnt\Crm\Contracts\SearchableInterface` enforces `getSearchFields(): array`. Both `Contact` and `Relation` implement it. Custom models passed via config must also implement it if search is needed.
 
+### Index columns
+`RelationManager` calls `$model::getIndexComponents()` to get the columns shown in the index table. Override this static method in a custom model to customise the columns — no config key needed.
+
+### Create / edit components
+`RelationManager` calls `$model::getIndexCreateComponents()` for the create popup form and `$model::getEditComponents()` for the edit view. By default `getEditComponents()` delegates to `getIndexCreateComponents()`. Override `getEditComponents()` in a custom model to use different fields in the edit view.
+
 ### Header actions
 
 `crm.relation_extra_header_actions` accepts an array of **class name strings**. The service provider instantiates each class and calls `->create_link()` on it. The resulting objects are appended to the relation index header after the "Add relation" button.
@@ -86,7 +92,9 @@ Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider rea
 | `relation_extra_tabs` | `crm.relation_extra_tabs` | `[]` |
 | `relation_extra_filters` | `crm.relation_extra_filters` | `[]` |
 | `relation_extra_header_actions` | `crm.relation_extra_header_actions` | `[]` |
-| `relation_general_components` | `crm.relation_general_components` | `null` |
+| `relation_manager_editable` | `crm.relation_manager_editable` | `true` |
+| `relation_manager_deletable` | `crm.relation_manager_deletable` | `true` |
+| `relation_manager_pagination_amount` | `crm.relation_manager_pagination_amount` | `50` |
 | `relation_sort_field` | `crm.relation_sort_field` | `'last_name'` |
 | `relation_sort_direction` | `crm.relation_sort_direction` | `StaticSorter::ASC` |
 | `contact_manager` | `crm.contact_manager` | `true` |
