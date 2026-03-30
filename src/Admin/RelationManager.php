@@ -3,8 +3,6 @@
 namespace Tnt\Crm\Admin;
 
 use dry\admin\component\Stack;
-use dry\admin\component\StringEdit;
-use dry\admin\component\StringView;
 use dry\admin\component\TabbedContent;
 use dry\orm\action\Create;
 use dry\orm\action\Delete;
@@ -15,6 +13,7 @@ use dry\orm\component\Search;
 use dry\orm\filter\EnumFilter;
 use dry\orm\Index;
 use dry\orm\Manager;
+use dry\orm\paginate\Paginator;
 use dry\orm\search\LikeSearcher;
 use dry\orm\sort\StaticSorter;
 use Tnt\Crm\Admin\Actions\CreateNote;
@@ -33,8 +32,10 @@ class RelationManager extends Manager
         $extra_tabs = [];
         $extra_filters = [];
         $extra_header_actions = [];
-        $general_components = null;
+        $pagination_amount = 50;
         $sort_field = 'last_name';
+        $manager_editable = true;
+        $manager_deletable = true;
         $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
 
@@ -44,26 +45,10 @@ class RelationManager extends Manager
             'plural' => 'relations',
         ]);
 
-        $generalComponents = $general_components ?? [
-            StringEdit::create('first_name')
-                ->set_label('First Name'),
-            StringEdit::create('last_name')
-                ->set_label('Last Name'),
-            StringEdit::create('organisation_name')
-                ->set_label('Organisation Name'),
-            StringEdit::create('vat_number')
-                ->set_label('VAT Number'),
-            StringEdit::create('website')
-                ->set_tooltip('An URL should always start with <strong>https://</strong>')
-                ->set_label('Website'),
-            StringEdit::create('email')
-                ->set_label('Email'),
-            StringEdit::create('phone')
-                ->set_label('Phone'),
-            Country::addressComponents(),
-        ];
+        $createComponents = $model::getIndexCreateComponents();
+        $editComponents = $model::getEditComponents();
 
-        $this->actions[] = $create = new Create($generalComponents, [
+        $this->actions[] = $create = new Create($createComponents, [
             'popup' => true,
         ]);
 
@@ -77,21 +62,26 @@ class RelationManager extends Manager
             $editContent->add_tab($label, $components);
         }
 
-        $this->actions[] = $this->edit = new Edit([
-            Stack::horizontal([
-                $editContent,
-                Stack::vertical([
+        if ($manager_editable) {
+            $this->actions[] = $this->edit = new Edit([
+                Stack::horizontal([
+                    $editContent,
                     Stack::vertical([
-                        ...$generalComponents
-                    ])->set_title("Relation Settings"),
-                    CreateNote::getNoteComponent()
-                ]),
-            ])->set_grid([5, 2]),
-        ]);
+                        Stack::vertical([
+                            ...$editComponents
+                        ])->set_title("Relation Settings"),
+                        CreateNote::getNoteComponent()
+                    ]),
+                ])->set_grid([5, 2]),
+            ]);
+        }
 
         ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register($this);
 
-        $this->actions[] = $delete = new Delete();
+        $delete = null;
+        if ($manager_deletable) {
+            $this->actions[] = $delete = new Delete();
+        }
 
         $this->header[] = new Search();
         $this->header[] = $create->create_link('Add relation');
@@ -105,31 +95,21 @@ class RelationManager extends Manager
 
         $this->footer[] = new Pagination();
 
+        $index_action_links = [];
+        foreach ($model::getIndexActions() as $action) {
+            $this->actions[] = $action;
+            $index_action_links[] = $action->create_link();
+        }
+
+        if ($manager_editable) {
+            $index_action_links[] = $this->edit->create_link();
+        }
+
         $this->index = new Index([
-            Stack::vertical([
-                Stack::horizontal([
-                    StringView::create('first_name'),
-                    StringView::create('last_name'),
-                    StringView::create('organisation_name'),
-                ]),
-                StringView::create('website')
-                    ->set_link(function ($row) {
-                        return $row->website;
-                    }),
-            ])->set_header('Relation'),
-            StringView::create('vat_number'),
-            StringView::create('email')
-                ->set_link(function ($row) {
-                    return "mailto:$row->email";
-                }),
-            StringView::create('phone'),
-            Stack::vertical([
-                StringView::create('address_street_and_number'),
-                StringView::create('address_postal_code_and_country'),
-            ])->set_header('Address'),
+            ...($model::getIndexComponents()),
             CreateNote::renderTableActions($create_note, $edit_note),
-            $this->edit->create_link(),
-            $delete->create_link(),
+            ...$index_action_links,
+            ...($manager_deletable ? [$delete->create_link()] : []),
         ]);
 
         $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
@@ -140,5 +120,6 @@ class RelationManager extends Manager
 
         $this->index->sorter = new StaticSorter($sort_field, $sort_direction);
         $this->index->searcher = new LikeSearcher((new $model())->getSearchFields());
+        $this->index->paginator = new Paginator($pagination_amount);
     }
 }

@@ -74,9 +74,13 @@ class CrmServiceProvider extends ServiceProvider
                     fn($class) => (new $class())->create_link(),
                     $config->get('crm.relation_extra_header_actions', [])
                 ),
-                'general_components' => $config->get('crm.relation_general_components', null),
                 'sort_field' => $config->get('crm.relation_sort_field', 'last_name'),
                 'sort_direction' => $config->get('crm.relation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
+                ...array_filter([
+                    'pagination_amount' => $config->get('crm.relation_manager_pagination_amount'),
+                    'manager_editable' => $config->get('crm.relation_manager_editable'),
+                    'manager_deletable' => $config->get('crm.relation_manager_deletable'),
+                ], fn($v) => $v !== null),
             ]),
         ];
 

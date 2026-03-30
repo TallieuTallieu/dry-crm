@@ -2,6 +2,9 @@
 
 namespace Tnt\Crm\Model;
 
+use dry\admin\component\Stack;
+use dry\admin\component\StringEdit;
+use dry\admin\component\StringView;
 use dry\orm\Model;
 use Tnt\Crm\Contracts\SearchableInterface;
 use Tnt\Crm\Model\Country;
@@ -42,7 +45,7 @@ class Relation extends Model implements SearchableInterface
     //for backend index purposes
     public function get_address_postal_code_and_country()
     {
-        return "{$this->address_postal_code} {$this->country?->name}";
+        return "{$this->address_postal_code} {$this->country}";
     }
 
     public function getSearchFields(): array
@@ -58,6 +61,63 @@ class Relation extends Model implements SearchableInterface
             'address_street',
             'address_number',
         ];
+    }
+
+    public static function getIndexComponents(): array
+    {
+        return [
+            StringView::create('first_name'),
+            StringView::create('last_name'),
+            Stack::vertical([
+                StringView::create('organisation_name'),
+                StringView::create('website')
+                    ->set_link(function ($row) {
+                        return $row->website;
+                    }),
+            ])->set_header('Organisation'),
+            StringView::create('vat_number'),
+            StringView::create('email')
+                ->set_link(function ($row) {
+                    return "mailto:$row->email";
+                }),
+            StringView::create('phone'),
+            Stack::vertical([
+                StringView::create('address_street_and_number'),
+                StringView::create('address_postal_code_and_country'),
+            ])->set_header('Address'),
+        ];
+    }
+
+    public static function getIndexCreateComponents(): array
+    {
+        return [
+            StringEdit::create('first_name')
+                ->set_label('First Name'),
+            StringEdit::create('last_name')
+                ->set_label('Last Name'),
+            StringEdit::create('organisation_name')
+                ->set_label('Organisation Name'),
+            StringEdit::create('vat_number')
+                ->set_label('VAT Number'),
+            StringEdit::create('website')
+                ->set_tooltip('An URL should always start with <strong>https://</strong>')
+                ->set_label('Website'),
+            StringEdit::create('email')
+                ->set_label('Email'),
+            StringEdit::create('phone')
+                ->set_label('Phone'),
+            Country::addressComponents(),
+        ];
+    }
+
+    public static function getEditComponents(): array
+    {
+        return static::getIndexCreateComponents();
+    }
+
+    public static function getIndexActions(): array
+    {
+        return [];
     }
 
     public function __toString()
