@@ -5,6 +5,7 @@ namespace Tnt\Crm\Model;
 use dry\admin\component\Stack;
 use dry\admin\component\StringEdit;
 use dry\admin\component\StringView;
+use dry\orm\component\ForeignKeyView;
 use dry\orm\Model;
 use Tnt\Crm\Contracts\SearchableInterface;
 use Tnt\Crm\Model\Country;
@@ -43,9 +44,9 @@ class Relation extends Model implements SearchableInterface
     }
 
     //for backend index purposes
-    public function get_address_postal_code_and_country()
+    public function get_address_postal_code_and_city()
     {
-        return "{$this->address_postal_code} {$this->country}";
+        return "{$this->address_postal_code} {$this->address_city}";
     }
 
     public function getSearchFields(): array
@@ -83,7 +84,8 @@ class Relation extends Model implements SearchableInterface
             StringView::create('phone'),
             Stack::vertical([
                 StringView::create('address_street_and_number'),
-                StringView::create('address_postal_code_and_country'),
+                StringView::create('address_postal_code_and_city'),
+                ForeignKeyView::create('country'),
             ])->set_header('Address'),
         ];
     }
