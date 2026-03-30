@@ -115,7 +115,7 @@ class RelationManager extends Manager
         $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
 
         foreach ($extra_filters as $filter) {
-            $this->index->filters[] = $filter;
+            $this->index->filters[] = new $filter;
         }
 
         $this->index->sorter = new StaticSorter($sort_field, $sort_direction);
