@@ -90,7 +90,7 @@ Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider rea
 | `contact_sort_field` | `crm.contact_sort_field` | `'first_name'` |
 | `contact_sort_direction` | `crm.contact_sort_direction` | `StaticSorter::ASC` |
 | `relation_extra_tabs` | `crm.relation_extra_tabs` | `[]` |
-| `relation_extra_filters` | `crm.relation_extra_filters` | `[]` |
+| `relation_manager_filters` | `crm.relation_manager_filters` | `[]` |
 | `relation_extra_header_actions` | `crm.relation_extra_header_actions` | `[]` |
 | `relation_manager_editable` | `crm.relation_manager_editable` | `true` |
 | `relation_manager_deletable` | `crm.relation_manager_deletable` | `true` |

@@ -48,7 +48,7 @@ Create `config/crm.php` in your project root. The file returns a flat array — 
 | `contact_sort_field` | `'first_name'` | Field to sort the contact index by |
 | `contact_sort_direction` | `StaticSorter::ASC` | Sort direction (`StaticSorter::ASC` or `StaticSorter::DESC`) |
 | `relation_extra_tabs` | `[]` | Extra tabs to add to the relation edit view, keyed by tab label |
-| `relation_extra_filters` | `[]` | Extra filters to add to the relation index |
+| `relation_manager_filters` | `[]` | Array of filter class name strings to add to the relation index. Each class is instantiated automatically. |
 | `relation_extra_header_actions` | `[]` | Array of class name strings to append to the relation index header. Each class is instantiated and `create_link()` is called; if the result has a non-null `action` property, that action is also registered on the manager. |
 | `relation_manager_pagination_amount` | `50` | Number of relations per page in the index |
 | `relation_manager_editable` | `true` | Set to `false` to hide the edit action and link |
