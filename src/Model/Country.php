@@ -40,12 +40,12 @@ class Country extends Model
     public static function enum(): array
     {
         return array_map(function ($row) {
-            return [$row->id, $row->name];
+            return [$row->id, ucwords($row->name)];
         }, self::all()->to_array());
     }
 
     public function __toString()
     {
-        return $this->name;
+        return ucwords($this->name);
     }
 }
