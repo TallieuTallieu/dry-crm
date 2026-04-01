@@ -90,7 +90,7 @@ class Relation extends Model implements SearchableInterface
         ];
     }
 
-    public static function getIndexCreateComponents(): array
+    public static function getCreateComponents(): array
     {
         return [
             StringEdit::create('first_name')
@@ -114,7 +114,7 @@ class Relation extends Model implements SearchableInterface
 
     public static function getEditComponents(): array
     {
-        return static::getIndexCreateComponents();
+        return static::getCreateComponents();
     }
 
     public static function getIndexActions(): array

@@ -48,7 +48,7 @@ src/
 `RelationManager` calls `$model::getIndexComponents()` to get the columns shown in the index table. Override this static method in a custom model to customise the columns — no config key needed.
 
 ### Create / edit components
-`RelationManager` calls `$model::getIndexCreateComponents()` for the create popup form and `$model::getEditComponents()` for the edit view. By default `getEditComponents()` delegates to `getIndexCreateComponents()`. Override `getEditComponents()` in a custom model to use different fields in the edit view.
+`RelationManager` calls `$model::getCreateComponents()` for the create popup form and `$model::getEditComponents()` for the edit view. By default `getEditComponents()` delegates to `getCreateComponents()`. Override `getEditComponents()` in a custom model to use different fields in the edit view.
 
 ### Header actions
 
@@ -84,7 +84,8 @@ Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider rea
 | `extra_modules` | `crm.extra_modules` | `[]` |
 | `relation_model` | `crm.relation_model` | `Tnt\Crm\Model\Relation::class` |
 | `contact_model` | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` |
-| `language_options` | `crm.language_options` | `Language::enum()` |
+| `language_enabled` | `crm.language_enabled` | `true` |
+| `language_options` | `crm.language_options` | `Language::enum()` (ignored when `language_enabled` is `false`) |
 | `contact_extra_tabs` | `crm.contact_extra_tabs` | `[]` |
 | `contact_extra_filters` | `crm.contact_extra_filters` | `[]` |
 | `contact_sort_field` | `crm.contact_sort_field` | `'first_name'` |

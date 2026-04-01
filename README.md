@@ -58,7 +58,7 @@ Create `config/crm.php` in your project root. The file returns a flat array — 
 | `contact_manager` | `true` | Set to `false` to exclude the ContactManager from the CRM portal |
 | `country_manager` | `true` | Set to `false` to exclude the CountryManager from the CRM portal |
 
-> **Note:** The `relation_general_components` config key has been removed. Override `getIndexCreateComponents()` and/or `getEditComponents()` on your custom model instead — see below.
+> **Note:** The `relation_general_components` config key has been removed. Override `getCreateComponents()` and/or `getEditComponents()` on your custom model instead — see below.
 
 ## Customising index columns
 
@@ -80,7 +80,7 @@ class Relation extends \Tnt\Crm\Model\Relation
 
 ## Customising create / edit form fields
 
-Form fields come from `getIndexCreateComponents()` on the model (used for the create popup) and `getEditComponents()` (used for the edit view). By default `getEditComponents()` delegates to `getIndexCreateComponents()`. Override it in a custom model to use different fields in the edit view:
+Form fields come from `getCreateComponents()` on the model (used for the create popup) and `getEditComponents()` (used for the edit view). By default `getEditComponents()` delegates to `getCreateComponents()`. Override it in a custom model to use different fields in the edit view:
 
 ```php
 class Relation extends \Tnt\Crm\Model\Relation
@@ -88,7 +88,7 @@ class Relation extends \Tnt\Crm\Model\Relation
     public static function getEditComponents(): array
     {
         return [
-            ...static::getIndexCreateComponents(),
+            ...static::getCreateComponents(),
             \dry\admin\component\StringEdit::create('extra_field')->set_label('Extra Field'),
         ];
     }
