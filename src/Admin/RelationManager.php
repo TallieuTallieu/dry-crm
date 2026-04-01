@@ -36,6 +36,7 @@ class RelationManager extends Manager
         $sort_field = 'last_name';
         $manager_editable = true;
         $manager_deletable = true;
+        $country_filter = true;
         $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
 
@@ -45,7 +46,7 @@ class RelationManager extends Manager
             'plural' => 'relations',
         ]);
 
-        $createComponents = $model::getIndexCreateComponents();
+        $createComponents = $model::getCreateComponents();
         $editComponents = $model::getEditComponents();
 
         $this->actions[] = $create = new Create($createComponents, [
@@ -110,9 +111,11 @@ class RelationManager extends Manager
             CreateNote::renderTableActions($create_note, $edit_note),
             ...$index_action_links,
             ...($manager_deletable ? [$delete->create_link()] : []),
-        ]);
+        ])->set_query_params();
 
-        $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
+        if ($country_filter) {
+            $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
+        }
 
         foreach ($extra_filters as $filter) {
             $this->index->filters[] = new $filter;

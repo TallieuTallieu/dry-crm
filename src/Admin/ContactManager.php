@@ -34,13 +34,16 @@ class ContactManager extends Manager
     public function __construct(array $kwargs = [])
     {
         $model = Contact::class;
-        $language_options = Language::enum();
+        $country_filter = true;
+        $language_enabled = true;
+        $language_options = null;
         $relation_model = Relation::class;
         $extra_tabs = [];
         $extra_filters = [];
         $sort_field = 'first_name';
         $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
+        $language_options ??= $language_enabled ? Language::enum() : [];
 
         parent::__construct($model, [
             'icon' => Module::ICON_PEOPLE,
@@ -60,14 +63,14 @@ class ContactManager extends Manager
             // todo: this is in the pivot no?
             // StringEdit::create('function')
             //     ->set_label('Function'),
-            EnumEdit::create('language')
+            ...($language_enabled ? [EnumEdit::create('language')
                 ->set_label("Language")
-                ->set_options($language_options),
+                ->set_options($language_options)] : []),
             StringEdit::create('email')
                 ->set_label('Email'),
             StringEdit::create('phone')
                 ->set_label('Phone'),
-            Country::addressComponents(),
+            ...($country_filter ? [Country::addressComponents()] : []),
         ];
 
         $this->actions[] = $create = new Create($generalComponents, [
@@ -115,8 +118,8 @@ class ContactManager extends Manager
                     return "mailto:$row->email";
                 }),
             StringView::create('phone'),
-            EnumView::create('language')
-                ->set_options($language_options),
+            ...($language_enabled ? [EnumView::create('language')
+                ->set_options($language_options)] : []),
             DateView::create("created")->set_format("d/m/Y H:i"),
             DateView::create("updated")->set_format("d/m/Y H:i"),
             CreateNote::renderTableActions($create_note, $edit_note),
@@ -124,8 +127,12 @@ class ContactManager extends Manager
             $delete->create_link(),
         ]);
 
-        $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
-        $this->index->filters[] = new EnumFilter("language", $language_options, ["title" => "Languages"]);
+        if ($country_filter) {
+            $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
+        }
+        if ($language_enabled) {
+            $this->index->filters[] = new EnumFilter("language", $language_options, ["title" => "Languages"]);
+        }
 
         foreach ($extra_filters as $filter) {
             $this->index->filters[] = $filter;

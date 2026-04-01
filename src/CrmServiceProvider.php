@@ -62,7 +62,9 @@ class CrmServiceProvider extends ServiceProvider
 
         $relationModel = $config->get('crm.relation_model', Relation::class);
         $contactModel = $config->get('crm.contact_model', Contact::class);
-        $languageOptions = $config->get('crm.language_options', Language::enum());
+        $countryManager = $config->get('crm.country_manager', true);
+        $languageEnabled = $config->get('crm.language_enabled', true);
+        $languageOptions = $languageEnabled ? $config->get('crm.language_options', Language::enum()) : [];
 
         $modules = [
             new RelationManager([
@@ -76,6 +78,7 @@ class CrmServiceProvider extends ServiceProvider
                 ),
                 'sort_field' => $config->get('crm.relation_sort_field', 'last_name'),
                 'sort_direction' => $config->get('crm.relation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
+                'country_filter' => $countryManager,
                 ...array_filter([
                     'pagination_amount' => $config->get('crm.relation_manager_pagination_amount'),
                     'manager_editable' => $config->get('crm.relation_manager_editable'),
@@ -88,6 +91,8 @@ class CrmServiceProvider extends ServiceProvider
             $modules[] = new ContactManager([
                 'model' => $contactModel,
                 'relation_model' => $relationModel,
+                'country_filter' => $countryManager,
+                'language_enabled' => $languageEnabled,
                 'language_options' => $languageOptions,
                 'extra_tabs' => $config->get('crm.contact_extra_tabs', []),
                 'extra_filters' => $config->get('crm.contact_extra_filters', []),
@@ -96,7 +101,7 @@ class CrmServiceProvider extends ServiceProvider
             ]);
         }
 
-        if ($config->get('crm.country_manager', true)) {
+        if ($countryManager) {
             $modules[] = new CountryManager();
         }
 
