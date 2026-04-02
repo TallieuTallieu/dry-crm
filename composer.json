@@ -4,7 +4,6 @@
   "type": "library",
   "license": "proprietary",
   "require": {
-    "tallieutallieu/dry": "^v3.8.1-beta.5",
     "tallieutallieu/oak": "^3.0.11",
     "tallieutallieu/dry-dbi": "^3.11",
     "tallieutallieu/dry-datalist": "^3.0",
