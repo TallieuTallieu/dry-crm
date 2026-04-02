@@ -28,8 +28,12 @@ return new class extends DatabaseRevision implements RevisionInterface {
                 $table->addColumn('address_city', 'varchar')->length(100)->null();
                 $table->addColumn('address_postal_code', 'varchar')->length(20)->null();
                 $table->addColumn('note', 'text')->null();
-                
+
+                $table->addColumn('relation', 'int')->length(11)->null();
+                $table->addForeignKey('relation', 'crm_relation');
+
                 $table->addColumn('country', 'int')->length(11)->null();
+                $table->addForeignKey('country', 'crm_country');
             });
 
         $this->execute();
