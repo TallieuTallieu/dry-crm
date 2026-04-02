@@ -7,7 +7,11 @@ use dry\admin\component\StringEdit;
 use dry\admin\component\StringView;
 use dry\orm\component\ForeignKeyView;
 use dry\orm\Model;
-use Tnt\Crm\Contracts\SearchableInterface;
+use dry\orm\relationship\HasMany;
+use dry\orm\relationship\ManyToMany;
+use Tnt\Crm\Contracts\PivotReferenceInterface;
+use dry\orm\sort\StaticSorter;
+use Tnt\Crm\Enum\ContactMode;
 use Tnt\Crm\Model\Country;
 
 /**
@@ -29,12 +33,30 @@ use Tnt\Crm\Model\Country;
  * @property string|null $phone
  * @property string|null $note
  */
-class Relation extends Model implements SearchableInterface
+class Relation extends Model implements PivotReferenceInterface
 {
     const TABLE = 'crm_relation';
 
+    public static ContactMode $contactMode = ContactMode::Pivot;
+    public static string $sortField = 'last_name';
+    public static int $sortDirection = StaticSorter::ASC;
+    public static int $paginationAmount = 50;
+    public static bool $managerEditable = true;
+    public static bool $managerDeletable = true;
+    public static array $searchFields = [
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'website',
+        'vat_number',
+        'address_city',
+        'address_street',
+        'address_number',
+    ];
+
     static $special_fields = [
-        "country" => Country::class
+        "country" => Country::class,
     ];
 
     //for backend index purposes
@@ -47,21 +69,6 @@ class Relation extends Model implements SearchableInterface
     public function get_address_postal_code_and_city()
     {
         return "{$this->address_postal_code} {$this->address_city}";
-    }
-
-    public function getSearchFields(): array
-    {
-        return [
-            'first_name',
-            'last_name',
-            'email',
-            'phone',
-            'website',
-            'vat_number',
-            'address_city',
-            'address_street',
-            'address_number',
-        ];
     }
 
     public static function getIndexComponents(): array
@@ -121,6 +128,21 @@ class Relation extends Model implements SearchableInterface
     {
         return [];
     }
+
+    public function getContacts(ContactMode $contact_mode = ContactMode::Pivot): HasMany|ManyToMany
+    {
+        if ($contact_mode === ContactMode::Direct) {
+            return $this->has_many(Contact::class, 'relation');
+        }
+
+        return $this->belongs_to_many(RelationContact::class, 'relation', 'contact');
+    }
+
+    public function getPivotTitle(): string { return 'contact'; }
+    public function getPivotForeignKey(): string { return 'contact'; }
+    public function getPivotDisplayColumn(): string { return 'first_name'; }
+    public function getPivotIndexName(): string { return 'Contact'; }
+    public function getPivotReferenceModel(): Model { return new Contact(); }
 
     public function __toString()
     {
