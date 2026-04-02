@@ -35,14 +35,14 @@ class ContactManager extends Manager
     {
         $model = Contact::class;
         $country_filter = true;
-        $language_enabled = true;
         $language_options = null;
         $relation_model = Relation::class;
         $extra_tabs = [];
         $extra_filters = [];
-        $sort_field = 'first_name';
-        $sort_direction = StaticSorter::ASC;
         extract($kwargs, EXTR_IF_EXISTS);
+        $language_enabled = $model::$languageEnabled;
+        $sort_field = $model::$sortField;
+        $sort_direction = $model::$sortDirection;
         $language_options ??= $language_enabled ? Language::enum() : [];
 
         parent::__construct($model, [
@@ -120,8 +120,8 @@ class ContactManager extends Manager
             StringView::create('phone'),
             ...($language_enabled ? [EnumView::create('language')
                 ->set_options($language_options)] : []),
-            DateView::create("created")->set_format("d/m/Y H:i"),
-            DateView::create("updated")->set_format("d/m/Y H:i"),
+            ...($model::$showCreatedInIndex ? [DateView::create("created")->set_format("d/m/Y H:i")] : []),
+            ...($model::$showUpdatedInIndex ? [DateView::create("updated")->set_format("d/m/Y H:i")] : []),
             CreateNote::renderTableActions($create_note, $edit_note),
             $this->edit->create_link(),
             $delete->create_link(),
@@ -139,6 +139,6 @@ class ContactManager extends Manager
         }
 
         $this->index->sorter = new StaticSorter($sort_field, $sort_direction);
-        $this->index->searcher = new LikeSearcher((new $model())->getSearchFields());
+        $this->index->searcher = new LikeSearcher($model::$searchFields);
     }
 }

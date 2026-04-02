@@ -17,6 +17,8 @@ use dry\orm\paginate\Paginator;
 use dry\orm\search\LikeSearcher;
 use dry\orm\sort\StaticSorter;
 use Tnt\Crm\Admin\Actions\CreateNote;
+use Tnt\Crm\Admin\ContactManager;
+use Tnt\Crm\Enum\ContactMode;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
 use Tnt\Crm\Model\Relation;
@@ -32,13 +34,15 @@ class RelationManager extends Manager
         $extra_tabs = [];
         $extra_filters = [];
         $extra_header_actions = [];
-        $pagination_amount = 50;
-        $sort_field = 'last_name';
-        $manager_editable = true;
-        $manager_deletable = true;
         $country_filter = true;
-        $sort_direction = StaticSorter::ASC;
+        $contact_language_options = null;
         extract($kwargs, EXTR_IF_EXISTS);
+        $contact_mode = $model::$contactMode;
+        $sort_field = $model::$sortField;
+        $sort_direction = $model::$sortDirection;
+        $pagination_amount = $model::$paginationAmount;
+        $manager_editable = $model::$managerEditable;
+        $manager_deletable = $model::$managerDeletable;
 
         parent::__construct($model, [
             'icon' => 'business_center',
@@ -53,11 +57,16 @@ class RelationManager extends Manager
             'popup' => true,
         ]);
 
+        $contactsInlineManager = $contact_mode === ContactMode::Direct
+            ? InlineManager::create(new ContactManager([
+                'model' => $contact_model,
+                'country_filter' => $country_filter,
+                'language_options' => $contact_language_options,
+            ]))->set_foreign_key('relation')
+            : InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $contact_model()]))->set_foreign_key('relation');
+
         $editContent = TabbedContent::create()
-            ->add_tab("Contacts", [
-                InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $contact_model()]))
-                    ->set_foreign_key('relation'),
-            ]);
+            ->add_tab("Contacts", [$contactsInlineManager]);
 
         foreach ($extra_tabs as $label => $components) {
             $editContent->add_tab($label, $components);
@@ -122,7 +131,7 @@ class RelationManager extends Manager
         }
 
         $this->index->sorter = new StaticSorter($sort_field, $sort_direction);
-        $this->index->searcher = new LikeSearcher((new $model())->getSearchFields());
+        $this->index->searcher = new LikeSearcher($model::$searchFields);
         $this->index->paginator = new Paginator($pagination_amount);
     }
 }

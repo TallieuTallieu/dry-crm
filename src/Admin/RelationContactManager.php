@@ -15,44 +15,25 @@ use dry\orm\Index;
 use dry\orm\Manager;
 use dry\orm\search\LikeSearcher;
 use Tnt\Crm\Admin\Actions\CreateNote;
-use Tnt\Crm\Model\Contact;
-use Tnt\Crm\Model\Relation;
+use Tnt\Crm\Contracts\PivotReferenceInterface;
 use Tnt\Crm\Model\RelationContact;
 
 class RelationContactManager extends Manager
 {
     public $edit;
 
-    public function __construct(Relation|Contact $relatedModel, array $kwargs = [])
+    public function __construct(PivotReferenceInterface $relatedModel, array $kwargs = [])
     {
         $model = RelationContact::class;
         $reference_model = null;
         extract($kwargs, EXTR_IF_EXISTS);
 
-        $title = '';
-        $foreignKey = '';
-        $foreignKeyColumn = '';
-        $foreignKeyIndexName = '';
+        $title = $relatedModel->getPivotTitle();
+        $foreignKey = $relatedModel->getPivotForeignKey();
+        $foreignKeyColumn = $relatedModel->getPivotDisplayColumn();
+        $foreignKeyIndexName = $relatedModel->getPivotIndexName();
+        $reference_model = $reference_model ?? $relatedModel->getPivotReferenceModel();
 
-        if ($relatedModel instanceof Relation) {
-            $title = 'contact';
-            $foreignKey = 'contact';
-            $foreignKeyColumn = 'first_name';
-            $foreignKeyIndexName = 'Contact';
-            $reference_model = $reference_model ?? new Contact();
-        }
-
-        if ($relatedModel instanceof Contact) {
-            $title = 'relation';
-            $foreignKey = 'relation';
-            $foreignKeyColumn = 'name';
-            $foreignKeyIndexName = 'Relation';
-            $reference_model = $reference_model ?? new Relation();
-        }
-
-        /**
-         * @param Relation|Contact $relatedModel
-         */
         parent::__construct($model, [
             'icon' => Module::ICON_PEOPLE,
             'singular' => $title,
@@ -64,7 +45,7 @@ class RelationContactManager extends Manager
                     ->set_components([
                         new StringView($foreignKeyColumn),
                     ])
-                    ->set_searcher(new LikeSearcher($reference_model->getSearchFields())),
+                    ->set_searcher(new LikeSearcher($reference_model::$searchFields ?? [])),
                 StringEdit::create('function')
                     ->set_label('Function'),
                 CreateNote::getNoteComponent()

@@ -63,8 +63,7 @@ class CrmServiceProvider extends ServiceProvider
         $relationModel = $config->get('crm.relation_model', Relation::class);
         $contactModel = $config->get('crm.contact_model', Contact::class);
         $countryManager = $config->get('crm.country_manager', true);
-        $languageEnabled = $config->get('crm.language_enabled', true);
-        $languageOptions = $languageEnabled ? $config->get('crm.language_options', Language::enum()) : [];
+        $languageOptions = $contactModel::$languageEnabled ? $config->get('crm.language_options', Language::enum()) : [];
 
         $modules = [
             new RelationManager([
@@ -76,14 +75,8 @@ class CrmServiceProvider extends ServiceProvider
                     fn($class) => (new $class())->create_link(),
                     $config->get('crm.relation_extra_header_actions', [])
                 ),
-                'sort_field' => $config->get('crm.relation_sort_field', 'last_name'),
-                'sort_direction' => $config->get('crm.relation_sort_direction', \dry\orm\sort\StaticSorter::ASC),
                 'country_filter' => $countryManager,
-                ...array_filter([
-                    'pagination_amount' => $config->get('crm.relation_manager_pagination_amount'),
-                    'manager_editable' => $config->get('crm.relation_manager_editable'),
-                    'manager_deletable' => $config->get('crm.relation_manager_deletable'),
-                ], fn($v) => $v !== null),
+                'contact_language_options' => $languageOptions,
             ]),
         ];
 
@@ -92,12 +85,9 @@ class CrmServiceProvider extends ServiceProvider
                 'model' => $contactModel,
                 'relation_model' => $relationModel,
                 'country_filter' => $countryManager,
-                'language_enabled' => $languageEnabled,
                 'language_options' => $languageOptions,
                 'extra_tabs' => $config->get('crm.contact_extra_tabs', []),
                 'extra_filters' => $config->get('crm.contact_extra_filters', []),
-                'sort_field' => $config->get('crm.contact_sort_field', 'first_name'),
-                'sort_direction' => $config->get('crm.contact_sort_direction', \dry\orm\sort\StaticSorter::ASC),
             ]);
         }
 
