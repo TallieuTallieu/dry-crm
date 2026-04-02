@@ -15,7 +15,6 @@ src/
 │   └── CountryManager.php
 ├── Contracts/           # Interfaces
 │   ├── CrmPortalInterface.php
-│   └── SearchableInterface.php
 ├── Enum/
 │   └── Language.php     # Backed enum with ::enum() helper returning [[value, label], ...]
 ├── Model/               # Dry ORM models
@@ -38,11 +37,7 @@ src/
 ### Models
 - Extend `dry\orm\Model`
 - Define `const TABLE`
-- Implement `SearchableInterface` to enable LikeSearcher in the admin index — return the field names to search on
 - Define `__toString()` for use in foreign key pickers
-
-### SearchableInterface
-`Tnt\Crm\Contracts\SearchableInterface` enforces `getSearchFields(): array`. Both `Contact` and `Relation` implement it. Custom models passed via config must also implement it if search is needed.
 
 ### Index columns
 `RelationManager` calls `$model::getIndexComponents()` to get the columns shown in the index table. Override this static method in a custom model to customise the columns — no config key needed.
@@ -84,20 +79,12 @@ Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider rea
 | `extra_modules` | `crm.extra_modules` | `[]` |
 | `relation_model` | `crm.relation_model` | `Tnt\Crm\Model\Relation::class` |
 | `contact_model` | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` |
-| `language_enabled` | `crm.language_enabled` | `true` |
-| `language_options` | `crm.language_options` | `Language::enum()` (ignored when `language_enabled` is `false`) |
+| `language_options` | `crm.language_options` | `Language::enum()` (ignored when `Contact::$languageEnabled` is `false`) |
 | `contact_extra_tabs` | `crm.contact_extra_tabs` | `[]` |
 | `contact_extra_filters` | `crm.contact_extra_filters` | `[]` |
-| `contact_sort_field` | `crm.contact_sort_field` | `'first_name'` |
-| `contact_sort_direction` | `crm.contact_sort_direction` | `StaticSorter::ASC` |
 | `relation_extra_tabs` | `crm.relation_extra_tabs` | `[]` |
 | `relation_manager_filters` | `crm.relation_manager_filters` | `[]` |
 | `relation_extra_header_actions` | `crm.relation_extra_header_actions` | `[]` |
-| `relation_manager_editable` | `crm.relation_manager_editable` | `true` |
-| `relation_manager_deletable` | `crm.relation_manager_deletable` | `true` |
-| `relation_manager_pagination_amount` | `crm.relation_manager_pagination_amount` | `50` |
-| `relation_sort_field` | `crm.relation_sort_field` | `'last_name'` |
-| `relation_sort_direction` | `crm.relation_sort_direction` | `StaticSorter::ASC` |
 | `contact_manager` | `crm.contact_manager` | `true` |
 | `country_manager` | `crm.country_manager` | `true` |
 
