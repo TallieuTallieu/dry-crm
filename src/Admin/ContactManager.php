@@ -13,6 +13,7 @@ use dry\admin\Module;
 use dry\orm\action\Create;
 use dry\orm\action\Delete;
 use dry\orm\action\Edit;
+use dry\orm\component\ForeignKeyIndexPicker;
 use dry\orm\component\InlineManager;
 use dry\orm\component\Pagination;
 use dry\orm\component\Search;
@@ -22,6 +23,7 @@ use dry\orm\Manager;
 use dry\orm\search\LikeSearcher;
 use dry\orm\sort\StaticSorter;
 use Tnt\Crm\Admin\Actions\CreateNote;
+use Tnt\Crm\Enum\ContactMode;
 use Tnt\Crm\Enum\Language;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
@@ -77,11 +79,15 @@ class ContactManager extends Manager
             'popup' => true,
         ]);
 
+        $relationsTabContent = $relation_model::$contactMode === ContactMode::Direct
+            ? [ForeignKeyIndexPicker::create('relation')
+                ->set_components([new StringView('first_name')])
+                ->set_searcher(new LikeSearcher($relation_model::$searchFields ?? []))]
+            : [InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $relation_model()]))
+                ->set_foreign_key('contact')];
+
         $editContent = TabbedContent::create()
-            ->add_tab("Relations", [
-                InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $relation_model()]))
-                    ->set_foreign_key('contact')
-            ]);
+            ->add_tab("Relations", $relationsTabContent);
 
         foreach ($extra_tabs as $label => $components) {
             $editContent->add_tab($label, $components);
