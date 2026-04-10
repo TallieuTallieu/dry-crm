@@ -103,7 +103,11 @@ class RelationManager extends Manager
             $this->header[] = $headerItem;
         }
 
-        $this->footer[] = new Pagination();
+        $enable_pagination = $model::$enablePagination;
+
+        if ($enable_pagination) {
+            $this->footer[] = new Pagination();
+        }
 
         $index_action_links = [];
         foreach ($model::getIndexActions() as $action) {
@@ -132,6 +136,9 @@ class RelationManager extends Manager
 
         $this->index->sorter = new StaticSorter($sort_field, $sort_direction);
         $this->index->searcher = new LikeSearcher($model::$searchFields);
-        $this->index->paginator = new Paginator($pagination_amount);
+
+        if ($enable_pagination) {
+            $this->index->paginator = new Paginator($pagination_amount);
+        }
     }
 }

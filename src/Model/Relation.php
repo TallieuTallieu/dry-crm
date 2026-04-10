@@ -40,9 +40,11 @@ class Relation extends Model implements PivotReferenceInterface
     public static ContactMode $contactMode = ContactMode::Pivot;
     public static string $sortField = 'last_name';
     public static int $sortDirection = StaticSorter::ASC;
+    public static bool $enablePagination = true;
     public static int $paginationAmount = 50;
     public static bool $managerEditable = true;
     public static bool $managerDeletable = true;
+
     public static array $searchFields = [
         'first_name',
         'last_name',
