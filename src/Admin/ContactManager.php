@@ -59,8 +59,7 @@ class ContactManager extends Manager
                     ->set_label('First name')
                     ->set_required(),
                 StringEdit::create('last_name')
-                    ->set_label('Last name')
-                    ->set_required(),
+                    ->set_label('Last name'),
             ])->set_grid([4, 4]),
             // todo: this is in the pivot no?
             // StringEdit::create('function')
