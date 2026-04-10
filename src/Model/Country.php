@@ -16,6 +16,9 @@ class Country extends Model
 {
     const TABLE = 'crm_country';
 
+    public static bool $managerEditable = true;
+    public static bool $managerDeletable = true;
+
     static $special_fields = [];
 
     public static function addressComponents(): Stack

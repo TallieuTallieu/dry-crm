@@ -20,6 +20,8 @@ class CountryManager extends Manager
     {
         $model = Country::class;
         extract($kwargs, EXTR_IF_EXISTS);
+        $manager_editable = $model::$managerEditable;
+        $manager_deletable = $model::$managerDeletable;
 
         parent::__construct($model, [
             'icon' => "public",
@@ -44,8 +46,8 @@ class CountryManager extends Manager
 
         $this->index = new Index([
             StringView::create('name'),
-            $this->edit->create_link(),
-            $delete->create_link(),
+            ...($manager_editable ? [$this->edit->create_link()] : []),
+            ...($manager_deletable ? [$delete->create_link()] : []),
         ]);
 
         $this->index->sorter = new StaticSorter('name', StaticSorter::ASC);
