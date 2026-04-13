@@ -126,6 +126,11 @@ class Relation extends Model implements PivotReferenceInterface
         return static::getCreateComponents();
     }
 
+    public static function getExtraTabs(): array
+    {
+        return [];
+    }
+
     public static function getIndexActions(): array
     {
         return [];

@@ -69,7 +69,6 @@ class CrmServiceProvider extends ServiceProvider
             new RelationManager([
                 'model' => $relationModel,
                 'contact_model' => $contactModel,
-                'extra_tabs' => $config->get('crm.relation_extra_tabs', []),
                 'extra_filters' => $config->get('crm.relation_manager_filters', []),
                 'extra_header_actions' => array_map(
                     fn($class) => (new $class())->create_link(),
@@ -86,7 +85,6 @@ class CrmServiceProvider extends ServiceProvider
                 'relation_model' => $relationModel,
                 'country_filter' => $countryManager,
                 'language_options' => $languageOptions,
-                'extra_tabs' => $config->get('crm.contact_extra_tabs', []),
                 'extra_filters' => $config->get('crm.contact_extra_filters', []),
             ]);
         }

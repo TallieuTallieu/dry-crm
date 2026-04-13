@@ -48,6 +48,11 @@ class Contact extends Model implements PivotReferenceInterface
     public function getPivotIndexName(): string { return 'Relation'; }
     public function getPivotReferenceModel(): Model { return new Relation(); }
 
+    public static function getExtraTabs(): array
+    {
+        return [];
+    }
+
     public function __toString()
     {
         return "{$this->first_name} {$this->last_name}";

@@ -39,9 +39,9 @@ class ContactManager extends Manager
         $country_filter = true;
         $language_options = null;
         $relation_model = Relation::class;
-        $extra_tabs = [];
         $extra_filters = [];
         extract($kwargs, EXTR_IF_EXISTS);
+        $extra_tabs = $model::getExtraTabs();
         $language_enabled = $model::$languageEnabled;
         $sort_field = $model::$sortField;
         $sort_direction = $model::$sortDirection;

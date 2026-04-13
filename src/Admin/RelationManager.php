@@ -31,12 +31,12 @@ class RelationManager extends Manager
     {
         $model = Relation::class;
         $contact_model = Contact::class;
-        $extra_tabs = [];
         $extra_filters = [];
         $extra_header_actions = [];
         $country_filter = true;
         $contact_language_options = null;
         extract($kwargs, EXTR_IF_EXISTS);
+        $extra_tabs = $model::getExtraTabs();
         $contact_mode = $model::$contactMode;
         $sort_field = $model::$sortField;
         $sort_direction = $model::$sortDirection;
