@@ -65,28 +65,33 @@ class CrmServiceProvider extends ServiceProvider
         $countryManager = $config->get('crm.country_manager', true);
         $languageOptions = $contactModel::$languageEnabled ? $config->get('crm.language_options', Language::enum()) : [];
 
+  
         $modules = [
-            new RelationManager([
-                'model' => $relationModel,
-                'contact_model' => $contactModel,
-                'extra_filters' => $config->get('crm.relation_manager_filters', []),
-                'extra_header_actions' => array_map(
-                    fn($class) => (new $class())->create_link(),
-                    $config->get('crm.relation_extra_header_actions', [])
-                ),
-                'country_filter' => $countryManager,
-                'contact_language_options' => $languageOptions,
-            ]),
+            new RelationManager(
+                $relationModel,
+                [
+                    'contact_model' => $contactModel,
+                    'extra_filters' => $config->get('crm.relation_manager_filters', []),
+                    'extra_header_actions' => array_map(
+                        fn($class) => (new $class())->create_link(),
+                        $config->get('crm.relation_extra_header_actions', [])
+                    ),
+                    'country_filter' => $countryManager,
+                    'contact_language_options' => $languageOptions,
+                ]
+            ),
         ];
 
         if ($config->get('crm.contact_manager', true)) {
-            $modules[] = new ContactManager([
-                'model' => $contactModel,
-                'relation_model' => $relationModel,
-                'country_filter' => $countryManager,
-                'language_options' => $languageOptions,
-                'extra_filters' => $config->get('crm.contact_extra_filters', []),
-            ]);
+            $modules[] = new ContactManager(
+                $contactModel,
+                [
+                    'relation_model' => $relationModel,
+                    'country_filter' => $countryManager,
+                    'language_options' => $languageOptions,
+                    'extra_filters' => $config->get('crm.contact_extra_filters', []),
+                ]
+            );
         }
 
         if ($countryManager) {

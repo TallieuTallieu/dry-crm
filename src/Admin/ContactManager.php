@@ -25,20 +25,16 @@ use dry\orm\sort\StaticSorter;
 use Tnt\Crm\Admin\Actions\CreateNote;
 use Tnt\Crm\Enum\ContactMode;
 use Tnt\Crm\Enum\Language;
-use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
 use Tnt\Crm\Model\Relation;
 
 class ContactManager extends Manager
 {
-    public $edit;
-
-    public function __construct(array $kwargs = [])
+    public function __construct($model, array $kwargs = [])
     {
-        $model = Contact::class;
+        $relation_model = Relation::class;
         $country_filter = true;
         $language_options = null;
-        $relation_model = Relation::class;
         $extra_filters = [];
         extract($kwargs, EXTR_IF_EXISTS);
         $extra_tabs = $model::getExtraTabs();
@@ -46,6 +42,7 @@ class ContactManager extends Manager
         $sort_field = $model::$sortField;
         $sort_direction = $model::$sortDirection;
         $language_options ??= $language_enabled ? Language::enum() : [];
+
 
         parent::__construct($model, [
             'icon' => Module::ICON_PEOPLE,
@@ -61,9 +58,6 @@ class ContactManager extends Manager
                 StringEdit::create('last_name')
                     ->set_label('Last name'),
             ])->set_grid([4, 4]),
-            // todo: this is in the pivot no?
-            // StringEdit::create('function')
-            //     ->set_label('Function'),
             ...($language_enabled ? [EnumEdit::create('language')
                 ->set_label("Language")
                 ->set_options($language_options)] : []),
@@ -92,7 +86,7 @@ class ContactManager extends Manager
             $editContent->add_tab($label, $components);
         }
 
-        $this->actions[] = $this->edit = new Edit([
+        $this->actions[] = $edit = new Edit([
             Stack::horizontal([
                 $editContent,
                 Stack::vertical([
@@ -128,7 +122,7 @@ class ContactManager extends Manager
             ...($model::$showCreatedInIndex ? [DateView::create("created")->set_format("d/m/Y H:i")] : []),
             ...($model::$showUpdatedInIndex ? [DateView::create("updated")->set_format("d/m/Y H:i")] : []),
             CreateNote::renderTableActions($create_note, $edit_note),
-            $this->edit->create_link(),
+            $edit->create_link(),
             $delete->create_link(),
         ]);
 

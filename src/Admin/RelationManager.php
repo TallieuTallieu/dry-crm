@@ -21,15 +21,12 @@ use Tnt\Crm\Admin\ContactManager;
 use Tnt\Crm\Enum\ContactMode;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
-use Tnt\Crm\Model\Relation;
+
 
 class RelationManager extends Manager
 {
-    public $edit;
-
-    public function __construct(array $kwargs = [])
+    public function __construct($model, array $kwargs = [])
     {
-        $model = Relation::class;
         $contact_model = Contact::class;
         $extra_filters = [];
         $extra_header_actions = [];
@@ -57,12 +54,16 @@ class RelationManager extends Manager
             'popup' => true,
         ]);
 
+        
         $contactsInlineManager = $contact_mode === ContactMode::Direct
-            ? InlineManager::create(new ContactManager([
-                'model' => $contact_model,
-                'country_filter' => $country_filter,
-                'language_options' => $contact_language_options,
-            ]))->set_foreign_key('relation')
+            ? InlineManager::create(new ContactManager(
+                $contact_model,
+                [
+                    'relation_model' => $model,
+                    'country_filter' => $country_filter,
+                    'language_options' => $contact_language_options,
+                ]
+            ))->set_foreign_key('relation')
             : InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $contact_model()]))->set_foreign_key('relation');
 
         $editContent = TabbedContent::create()
@@ -73,7 +74,7 @@ class RelationManager extends Manager
         }
 
         if ($manager_editable) {
-            $this->actions[] = $this->edit = new Edit([
+            $this->actions[] = $edit = new Edit([
                 Stack::horizontal([
                     $editContent,
                     Stack::vertical([
@@ -116,7 +117,7 @@ class RelationManager extends Manager
         }
 
         if ($manager_editable) {
-            $index_action_links[] = $this->edit->create_link();
+            $index_action_links[] = $edit->create_link();
         }
 
         $this->index = new Index([
