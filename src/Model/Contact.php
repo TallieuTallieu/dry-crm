@@ -2,6 +2,10 @@
 
 namespace Tnt\Crm\Model;
 
+use dry\admin\component\DateView;
+use dry\admin\component\EnumView;
+use dry\admin\component\Stack;
+use dry\admin\component\StringView;
 use dry\orm\Model;
 use dry\orm\sort\StaticSorter;
 use Tnt\Crm\Contracts\PivotReferenceInterface;
@@ -36,6 +40,7 @@ class Contact extends Model implements PivotReferenceInterface
     public static array $searchFields = ['first_name', 'last_name', 'email', 'phone'];
     public static bool $showCreatedInIndex = true;
     public static bool $showUpdatedInIndex = true;
+    public static bool $clickToEdit = false;
 
     static $special_fields = [
         "country" => Country::class,
@@ -47,6 +52,25 @@ class Contact extends Model implements PivotReferenceInterface
     public function getPivotDisplayColumn(): string { return 'first_name'; }
     public function getPivotIndexName(): string { return 'Relation'; }
     public function getPivotReferenceModel(): Model { return new Relation(); }
+
+    public static function getIndexComponents(array $language_options = []): array
+    {
+        return [
+            Stack::vertical([
+                StringView::create('first_name'),
+                StringView::create('last_name'),
+            ])->set_header('Name'),
+            StringView::create('email')
+                ->set_link(function ($row) {
+                    return "mailto:$row->email";
+                }),
+            StringView::create('phone'),
+            ...(static::$languageEnabled ? [EnumView::create('language')
+                ->set_options($language_options)] : []),
+            ...(static::$showCreatedInIndex ? [DateView::create("created")->set_format("d/m/Y H:i")] : []),
+            ...(static::$showUpdatedInIndex ? [DateView::create("updated")->set_format("d/m/Y H:i")] : []),
+        ];
+    }
 
     public static function getExtraTabs(): array
     {

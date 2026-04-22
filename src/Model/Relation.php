@@ -41,6 +41,7 @@ class Relation extends Model implements PivotReferenceInterface
     public static string $sortField = 'last_name';
     public static int $sortDirection = StaticSorter::ASC;
     public static bool $enablePagination = true;
+    public static bool $clickToEdit = false;
     public static int $paginationAmount = 50;
     public static bool $managerEditable = true;
     public static bool $managerDeletable = true;
@@ -134,6 +135,11 @@ class Relation extends Model implements PivotReferenceInterface
     public static function getIndexActions(): array
     {
         return [];
+    }
+
+    public static function getPostSaveCallback(): ?callable
+    {
+        return null;
     }
 
     public function getContacts(ContactMode $contact_mode = ContactMode::Pivot): HasMany|ManyToMany

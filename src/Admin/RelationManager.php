@@ -50,9 +50,10 @@ class RelationManager extends Manager
         $createComponents = $model::getCreateComponents();
         $editComponents = $model::getEditComponents();
 
-        $this->actions[] = $create = new Create($createComponents, [
+        $postSaveCallback = $model::getPostSaveCallback();
+        $this->actions[] = $create = new Create($createComponents, array_merge([
             'popup' => true,
-        ]);
+        ], $postSaveCallback !== null ? ["post_save_callback" => $postSaveCallback] : []));
 
         
         $contactsInlineManager = $contact_mode === ContactMode::Direct
@@ -105,6 +106,7 @@ class RelationManager extends Manager
         }
 
         $enable_pagination = $model::$enablePagination;
+        $click_to_edit = $model::$clickToEdit;
 
         if ($enable_pagination) {
             $this->footer[] = new Pagination();
@@ -140,6 +142,10 @@ class RelationManager extends Manager
 
         if ($enable_pagination) {
             $this->index->paginator = new Paginator($pagination_amount);
+        }
+
+        if ($manager_editable && $click_to_edit) {
+            $this->index->set_row_action($edit->create_link(''));
         }
     }
 }

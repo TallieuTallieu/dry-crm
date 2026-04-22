@@ -2,9 +2,7 @@
 
 namespace Tnt\Crm\Admin;
 
-use dry\admin\component\DateView;
 use dry\admin\component\EnumEdit;
-use dry\admin\component\EnumView;
 use dry\admin\component\Stack;
 use dry\admin\component\StringEdit;
 use dry\admin\component\StringView;
@@ -41,6 +39,7 @@ class ContactManager extends Manager
         $language_enabled = $model::$languageEnabled;
         $sort_field = $model::$sortField;
         $sort_direction = $model::$sortDirection;
+        $click_to_edit = $model::$clickToEdit;
         $language_options ??= $language_enabled ? Language::enum() : [];
 
 
@@ -108,23 +107,15 @@ class ContactManager extends Manager
         $this->footer[] = new Pagination();
 
         $this->index = new Index([
-            Stack::vertical([
-                StringView::create('first_name'),
-                StringView::create('last_name'),
-            ])->set_header('Name'),
-            StringView::create('email')
-                ->set_link(function ($row) {
-                    return "mailto:$row->email";
-                }),
-            StringView::create('phone'),
-            ...($language_enabled ? [EnumView::create('language')
-                ->set_options($language_options)] : []),
-            ...($model::$showCreatedInIndex ? [DateView::create("created")->set_format("d/m/Y H:i")] : []),
-            ...($model::$showUpdatedInIndex ? [DateView::create("updated")->set_format("d/m/Y H:i")] : []),
+            ...$model::getIndexComponents($language_options),
             CreateNote::renderTableActions($create_note, $edit_note),
             $edit->create_link(),
             $delete->create_link(),
         ]);
+
+        if ($click_to_edit) {
+            $this->index->set_row_action($edit->create_link(''));
+        }
 
         if ($country_filter) {
             $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);

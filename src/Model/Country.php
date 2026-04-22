@@ -18,6 +18,7 @@ class Country extends Model
 
     public static bool $managerEditable = true;
     public static bool $managerDeletable = true;
+    public static bool $clickToEdit = false;
 
     static $special_fields = [];
 

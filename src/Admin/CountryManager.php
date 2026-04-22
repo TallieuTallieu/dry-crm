@@ -22,6 +22,7 @@ class CountryManager extends Manager
         extract($kwargs, EXTR_IF_EXISTS);
         $manager_editable = $model::$managerEditable;
         $manager_deletable = $model::$managerDeletable;
+        $click_to_edit = $model::$clickToEdit;
 
         parent::__construct($model, [
             'icon' => "public",
@@ -51,5 +52,9 @@ class CountryManager extends Manager
         ]);
 
         $this->index->sorter = new StaticSorter('name', StaticSorter::ASC);
+
+        if ($manager_editable && $click_to_edit) {
+            $this->index->set_row_action($this->edit->create_link(''));
+        }
     }
 }
