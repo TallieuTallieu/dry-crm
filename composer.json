@@ -5,11 +5,10 @@
   "license": "proprietary",
   "require": {
     "php": "^8.4",
-    "tallieutallieu/dry": "^4.6.2",
+    "tallieutallieu/dry": "^4.7.2",
     "tallieutallieu/oak": "^4.3.0",
     "tallieutallieu/dry-dbi": "^3.13.3",
-    "tallieutallieu/dry-datalist": "^3.1.2",
-    "nesbot/carbon": "^3.0"
+    "tallieutallieu/dry-datalist": "^3.1.2"
   },
   "autoload": {
     "psr-4": {
