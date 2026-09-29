@@ -59,7 +59,7 @@ class Relation extends Model implements PivotReferenceInterface
     ];
 
     static $special_fields = [
-        "country" => Country::class,
+        'country' => Country::class,
     ];
 
     //for backend index purposes
@@ -81,16 +81,14 @@ class Relation extends Model implements PivotReferenceInterface
             StringView::create('last_name'),
             Stack::vertical([
                 StringView::create('organisation_name'),
-                StringView::create('website')
-                    ->set_link(function ($row) {
-                        return $row->website;
-                    }),
+                StringView::create('website')->set_link(function ($row) {
+                    return $row->website;
+                }),
             ])->set_header('Organisation'),
             StringView::create('vat_number'),
-            StringView::create('email')
-                ->set_link(function ($row) {
-                    return "mailto:$row->email";
-                }),
+            StringView::create('email')->set_link(function ($row) {
+                return "mailto:$row->email";
+            }),
             StringView::create('phone'),
             Stack::vertical([
                 StringView::create('address_street_and_number'),
@@ -103,21 +101,19 @@ class Relation extends Model implements PivotReferenceInterface
     public static function getCreateComponents(): array
     {
         return [
-            StringEdit::create('first_name')
-                ->set_label('First Name'),
-            StringEdit::create('last_name')
-                ->set_label('Last Name'),
-            StringEdit::create('organisation_name')
-                ->set_label('Organisation Name'),
-            StringEdit::create('vat_number')
-                ->set_label('VAT Number'),
+            StringEdit::create('first_name')->set_label('First Name'),
+            StringEdit::create('last_name')->set_label('Last Name'),
+            StringEdit::create('organisation_name')->set_label(
+                'Organisation Name',
+            ),
+            StringEdit::create('vat_number')->set_label('VAT Number'),
             StringEdit::create('website')
-                ->set_tooltip('An URL should always start with <strong>https://</strong>')
+                ->set_tooltip(
+                    'An URL should always start with <strong>https://</strong>',
+                )
                 ->set_label('Website'),
-            StringEdit::create('email')
-                ->set_label('Email'),
-            StringEdit::create('phone')
-                ->set_label('Phone'),
+            StringEdit::create('email')->set_label('Email'),
+            StringEdit::create('phone')->set_label('Phone'),
             Country::addressComponents(),
         ];
     }
@@ -142,24 +138,46 @@ class Relation extends Model implements PivotReferenceInterface
         return null;
     }
 
-    public function getContacts(ContactMode $contact_mode = ContactMode::Pivot): HasMany|ManyToMany
-    {
+    public function getContacts(
+        ContactMode $contact_mode = ContactMode::Pivot,
+    ): HasMany|ManyToMany {
         if ($contact_mode === ContactMode::Direct) {
             return $this->has_many(Contact::class, 'relation');
         }
 
-        return $this->belongs_to_many(RelationContact::class, 'relation', 'contact');
+        return $this->belongs_to_many(
+            RelationContact::class,
+            'relation',
+            'contact',
+        );
     }
 
-    public function getPivotTitle(): string { return 'contact'; }
-    public function getPivotForeignKey(): string { return 'contact'; }
-    public function getPivotDisplayColumn(): string { return 'first_name'; }
-    public function getPivotIndexName(): string { return 'Contact'; }
-    public function getPivotReferenceModel(): Model { return new Contact(); }
+    public function getPivotTitle(): string
+    {
+        return 'contact';
+    }
+    public function getPivotForeignKey(): string
+    {
+        return 'contact';
+    }
+    public function getPivotDisplayColumn(): string
+    {
+        return 'first_name';
+    }
+    public function getPivotIndexName(): string
+    {
+        return 'Contact';
+    }
+    public function getPivotReferenceModel(): Model
+    {
+        return new Contact();
+    }
 
     public function __toString()
     {
-        return trim(implode(' ', array_filter([$this->first_name, $this->last_name])))
-            ?: ($this->organisation_name ?? '');
+        return trim(
+            implode(' ', array_filter([$this->first_name, $this->last_name])),
+        ) ?:
+            $this->organisation_name ?? '';
     }
 }

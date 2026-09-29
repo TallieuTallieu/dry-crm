@@ -24,7 +24,11 @@ abstract class DatabaseRevision
         $connection = Connection::get();
 
         foreach ($this->queryBuilder->getQueries() as $query) {
-            $query = str_replace("COLLATE 'utf8mb4_0900_ai_ci'", "COLLATE 'utf8mb4_unicode_ci'", $query);
+            $query = str_replace(
+                "COLLATE 'utf8mb4_0900_ai_ci'",
+                "COLLATE 'utf8mb4_unicode_ci'",
+                $query,
+            );
             $connection->query($query);
         }
     }

@@ -6,25 +6,25 @@ The user may provide a revision name as an argument: `$ARGUMENTS`
 
 If no argument is provided, ask the user for the revision name.
 
-**Naming convention:** snake_case and prepend with timestamp `Y_m_d_timestamp_` (e.g., `CreateRelationTable`, `UpdateContactAddPhone`, `AddSlugToRelationTable`).
+**Naming convention:** snake*case and prepend with timestamp `Y_m_d_timestamp*`(e.g.,`CreateRelationTable`, `UpdateContactAddPhone`, `AddSlugToRelationTable`).
 
 ### Steps
 
 1. Determine the revision name (from `$ARGUMENTS` or ask the user).
 2. Detect the action type from the name:
-   - Starts with `Create` → use **create** template
-   - Starts with `Add`, `Update`, `Alter`, `Modify`, `Remove`, `Drop` → use **alter** template
-   - Default to **alter** template if unclear
+    - Starts with `Create` → use **create** template
+    - Starts with `Add`, `Update`, `Alter`, `Modify`, `Remove`, `Drop` → use **alter** template
+    - Default to **alter** template if unclear
 3. Extract the table name from the revision name:
-   - `CreateRelationTable` → `crm_relation`
-   - `UpdateContactAddPhone` → `crm_contact` (convert PascalCase to snake_case, drop trailing action words like `AddPhone`)
-   - `AddSlugToRelationTable` → `crm_relation`
-   - Use your best judgment to extract the primary table name
+    - `CreateRelationTable` → `crm_relation`
+    - `UpdateContactAddPhone` → `crm_contact` (convert PascalCase to snake_case, drop trailing action words like `AddPhone`)
+    - `AddSlugToRelationTable` → `crm_relation`
+    - Use your best judgment to extract the primary table name
 4. Generate descriptions:
-   - **Create**: up = `Create {table} table`, down = `Drop {table} table`
-   - **Drop**: up = `Drop {table} table`, down = `Create {table} table`
-   - **Add columns**: up = `Add columns to {table} table`, down = `Remove columns from {table} table`
-   - **Alter/Update/Modify**: up = `Update {table} table`, down = `Revert {table} table changes`
+    - **Create**: up = `Create {table} table`, down = `Drop {table} table`
+    - **Drop**: up = `Drop {table} table`, down = `Create {table} table`
+    - **Add columns**: up = `Add columns to {table} table`, down = `Remove columns from {table} table`
+    - **Alter/Update/Modify**: up = `Update {table} table`, down = `Revert {table} table changes`
 5. Write the file to `src/Revisions/{RevisionName}.php`.
 
 ### Create template

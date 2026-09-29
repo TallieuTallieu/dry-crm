@@ -5,22 +5,22 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@prettier/plugin-php@npm:^0.22.4":
-  version: 0.22.4
-  resolution: "@prettier/plugin-php@npm:0.22.4"
+"@prettier/plugin-php@npm:^0.25.0":
+  version: 0.25.0
+  resolution: "@prettier/plugin-php@npm:0.25.0"
   dependencies:
-    linguist-languages: "npm:^7.27.0"
-    php-parser: "npm:^3.1.5"
+    linguist-languages: "npm:^8.0.0"
+    php-parser: "npm:^3.4.0"
   peerDependencies:
     prettier: ^3.0.0
-  checksum: 10c0/31b46f52caad02ca41fc64a21676d26d4c8100f188a2d61107909e36e09c6a6342d474deea99f6abd62bce943b43d1ae0242281eba207e9376e72bfeba619cf3
+  checksum: 10c0/c894e74718ce7a2ae7f632d3566791c545ce68a328a763c97ad0526b0f00a724429979f8e411709e56a41b8debdb512c10823daaeb42458777c0b41c242c8d34
   languageName: node
   linkType: hard
 
-"linguist-languages@npm:^7.27.0":
-  version: 7.31.2
-  resolution: "linguist-languages@npm:7.31.2"
-  checksum: 10c0/ed28967c5e3088ddf4de0363de0c7cbbe03d8dbe91655edfce440b84c51aeac1c295df8807c05ae23411246d6c2f3155da2cceda8ed678e8476d0e0d16d5cb15
+"linguist-languages@npm:^8.0.0":
+  version: 8.2.0
+  resolution: "linguist-languages@npm:8.2.0"
+  checksum: 10c0/28383cda9cdbe1bd29938ad776d3190ae16c1828dadaba34d799dbc049872b7deada607d93d557ab5551c5789f3e4a47eab6241ddb8ac0a7ed1d7b0bc0c6b14d
   languageName: node
   linkType: hard
 
@@ -28,15 +28,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "oak@workspace:."
   dependencies:
-    "@prettier/plugin-php": "npm:^0.22.4"
+    "@prettier/plugin-php": "npm:^0.25.0"
     prettier: "npm:^3.5.3"
   languageName: unknown
   linkType: soft
 
-"php-parser@npm:^3.1.5":
-  version: 3.2.5
-  resolution: "php-parser@npm:3.2.5"
-  checksum: 10c0/e10aecf072d472e40f7501c611398a03bf67152004a6d971b813cd538866edc9a09d6a12f4bef790f253446a15a56134a3405ca159189983c9460446af08c3c5
+"php-parser@npm:^3.4.0":
+  version: 3.7.0
+  resolution: "php-parser@npm:3.7.0"
+  checksum: 10c0/eecfb4da0fe900f5a1abb4370f64404345ae6a98a026e1eac8d4f11e7a3b56ef45fde031a98793aaa5a54cead27a6b93c00e447f0dfc71f58bdcbe5382c3dae7
   languageName: node
   linkType: hard
 

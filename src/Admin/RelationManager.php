@@ -22,7 +22,6 @@ use Tnt\Crm\Enum\ContactMode;
 use Tnt\Crm\Model\Contact;
 use Tnt\Crm\Model\Country;
 
-
 class RelationManager extends Manager
 {
     public function __construct($model, array $kwargs = [])
@@ -51,24 +50,36 @@ class RelationManager extends Manager
         $editComponents = $model::getEditComponents();
 
         $postSaveCallback = $model::getPostSaveCallback();
-        $this->actions[] = $create = new Create($createComponents, array_merge([
-            'popup' => true,
-        ], $postSaveCallback !== null ? ["post_save_callback" => $postSaveCallback] : []));
-
-        
-        $contactsInlineManager = $contact_mode === ContactMode::Direct
-            ? InlineManager::create(new ContactManager(
-                $contact_model,
+        $this->actions[] = $create = new Create(
+            $createComponents,
+            array_merge(
                 [
-                    'relation_model' => $model,
-                    'country_filter' => $country_filter,
-                    'language_options' => $contact_language_options,
-                ]
-            ))->set_foreign_key('relation')
-            : InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $contact_model()]))->set_foreign_key('relation');
+                    'popup' => true,
+                ],
+                $postSaveCallback !== null
+                    ? ['post_save_callback' => $postSaveCallback]
+                    : [],
+            ),
+        );
 
-        $editContent = TabbedContent::create()
-            ->add_tab("Contacts", [$contactsInlineManager]);
+        $contactsInlineManager =
+            $contact_mode === ContactMode::Direct
+                ? InlineManager::create(
+                    new ContactManager($contact_model, [
+                        'relation_model' => $model,
+                        'country_filter' => $country_filter,
+                        'language_options' => $contact_language_options,
+                    ]),
+                )->set_foreign_key('relation')
+                : InlineManager::create(
+                    new RelationContactManager(new $model(), [
+                        'reference_model' => new $contact_model(),
+                    ]),
+                )->set_foreign_key('relation');
+
+        $editContent = TabbedContent::create()->add_tab('Contacts', [
+            $contactsInlineManager,
+        ]);
 
         foreach ($extra_tabs as $label => $components) {
             $editContent->add_tab($label, $components);
@@ -79,16 +90,18 @@ class RelationManager extends Manager
                 Stack::horizontal([
                     $editContent,
                     Stack::vertical([
-                        Stack::vertical([
-                            ...$editComponents
-                        ])->set_title("Relation Settings"),
-                        CreateNote::getNoteComponent()
+                        Stack::vertical([...$editComponents])->set_title(
+                            'Relation Settings',
+                        ),
+                        CreateNote::getNoteComponent(),
                     ]),
                 ])->set_grid([5, 2]),
             ]);
         }
 
-        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register($this);
+        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register(
+            $this,
+        );
 
         $delete = null;
         if ($manager_deletable) {
@@ -99,7 +112,10 @@ class RelationManager extends Manager
         $this->header[] = $create->create_link('Add relation');
 
         foreach ($extra_header_actions as $headerItem) {
-            if (property_exists($headerItem, 'action') && $headerItem->action !== null) {
+            if (
+                property_exists($headerItem, 'action') &&
+                $headerItem->action !== null
+            ) {
                 $this->actions[] = $headerItem->action;
             }
             $this->header[] = $headerItem;
@@ -123,18 +139,22 @@ class RelationManager extends Manager
         }
 
         $this->index = new Index([
-            ...($model::getIndexComponents()),
+            ...$model::getIndexComponents(),
             CreateNote::renderTableActions($create_note, $edit_note),
             ...$index_action_links,
-            ...($manager_deletable ? [$delete->create_link()] : []),
+            ...$manager_deletable ? [$delete->create_link()] : [],
         ])->set_query_params();
 
         if ($country_filter) {
-            $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
+            $this->index->filters[] = new EnumFilter(
+                'country',
+                Country::enum(),
+                ['title' => 'Countries'],
+            );
         }
 
         foreach ($extra_filters as $filter) {
-            $this->index->filters[] = new $filter;
+            $this->index->filters[] = new $filter();
         }
 
         $this->index->sorter = new StaticSorter($sort_field, $sort_direction);

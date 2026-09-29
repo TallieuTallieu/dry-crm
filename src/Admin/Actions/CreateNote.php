@@ -22,7 +22,10 @@ class CreateNote extends Edit
             'mode' => Edit::MODE_POPUP,
         ];
 
-        parent::__construct([Stack::vertical([self::getNoteComponent()])], $kwargs);
+        parent::__construct(
+            [Stack::vertical([self::getNoteComponent()])],
+            $kwargs,
+        );
     }
 
     public static function getNoteComponent(): StringEdit
@@ -37,10 +40,15 @@ class CreateNote extends Edit
         return ['create' => $create_note, 'edit' => $edit_note];
     }
 
-    public static function renderTableActions(self $create_note, self $edit_note): Conditional
-    {
+    public static function renderTableActions(
+        self $create_note,
+        self $edit_note,
+    ): Conditional {
         return new Conditional([
-            new Or_(new Equals(new Field(['note']), new Literal("")), new Equals(new Field(['note']), new Literal(null))),
+            new Or_(
+                new Equals(new Field(['note']), new Literal('')),
+                new Equals(new Field(['note']), new Literal(null)),
+            ),
             [$create_note->create_link('')],
             new Literal(true),
             [$edit_note->create_link('')],
