@@ -5,6 +5,16 @@ follow [Semantic Versioning](https://semver.org). New entries are generated from
 commit messages by [dry-ci](https://github.com/TallieuTallieu/dry-ci); past
 entries may be edited by hand.
 
+## v1.0.0 - 2026-09-29
+
+### Breaking changes
+
+- Require dry 4 and switch to dry-ci
+
+### Other changes
+
+- Backfill CHANGELOG.md [sc-11672](https://app.shortcut.com/tallieu--tallieu/story/11672)
+
 ## v0.1.9 - 2026-04-22
 
 ### Features
