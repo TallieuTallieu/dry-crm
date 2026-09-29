@@ -42,7 +42,6 @@ class ContactManager extends Manager
         $click_to_edit = $model::$clickToEdit;
         $language_options ??= $language_enabled ? Language::enum() : [];
 
-
         parent::__construct($model, [
             'icon' => Module::ICON_PEOPLE,
             'singular' => 'contact',
@@ -54,32 +53,47 @@ class ContactManager extends Manager
                 StringEdit::create('first_name')
                     ->set_label('First name')
                     ->set_required(),
-                StringEdit::create('last_name')
-                    ->set_label('Last name'),
+                StringEdit::create('last_name')->set_label('Last name'),
             ])->set_grid([4, 4]),
-            ...($language_enabled ? [EnumEdit::create('language')
-                ->set_label("Language")
-                ->set_options($language_options)] : []),
-            StringEdit::create('email')
-                ->set_label('Email'),
-            StringEdit::create('phone')
-                ->set_label('Phone'),
-            ...($country_filter ? [Country::addressComponents()] : []),
+            ...$language_enabled
+                ? [
+                    EnumEdit::create('language')
+                        ->set_label('Language')
+                        ->set_options($language_options),
+                ]
+                : [],
+            StringEdit::create('email')->set_label('Email'),
+            StringEdit::create('phone')->set_label('Phone'),
+            ...$country_filter ? [Country::addressComponents()] : [],
         ];
 
         $this->actions[] = $create = new Create($generalComponents, [
             'popup' => true,
         ]);
 
-        $relationsTabContent = $relation_model::$contactMode === ContactMode::Direct
-            ? [ForeignKeyIndexPicker::create('relation')
-                ->set_components([new StringView('first_name')])
-                ->set_searcher(new LikeSearcher($relation_model::$searchFields ?? []))]
-            : [InlineManager::create(new RelationContactManager(new $model(), ['reference_model' => new $relation_model()]))
-                ->set_foreign_key('contact')];
+        $relationsTabContent =
+            $relation_model::$contactMode === ContactMode::Direct
+                ? [
+                    ForeignKeyIndexPicker::create('relation')
+                        ->set_components([new StringView('first_name')])
+                        ->set_searcher(
+                            new LikeSearcher(
+                                $relation_model::$searchFields ?? [],
+                            ),
+                        ),
+                ]
+                : [
+                    InlineManager::create(
+                        new RelationContactManager(new $model(), [
+                            'reference_model' => new $relation_model(),
+                        ]),
+                    )->set_foreign_key('contact'),
+                ];
 
-        $editContent = TabbedContent::create()
-            ->add_tab("Relations", $relationsTabContent);
+        $editContent = TabbedContent::create()->add_tab(
+            'Relations',
+            $relationsTabContent,
+        );
 
         foreach ($extra_tabs as $label => $components) {
             $editContent->add_tab($label, $components);
@@ -90,14 +104,16 @@ class ContactManager extends Manager
                 $editContent,
                 Stack::vertical([
                     Stack::vertical([
-                        ...$generalComponents
+                        ...$generalComponents,
                     ])->enable_background(),
                     CreateNote::getNoteComponent(),
                 ]),
             ])->set_grid([5, 2]),
         ]);
 
-        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register($this);
+        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register(
+            $this,
+        );
 
         $this->actions[] = $delete = new Delete();
 
@@ -118,10 +134,18 @@ class ContactManager extends Manager
         }
 
         if ($country_filter) {
-            $this->index->filters[] = new EnumFilter("country", Country::enum(), ["title" => "Countries"]);
+            $this->index->filters[] = new EnumFilter(
+                'country',
+                Country::enum(),
+                ['title' => 'Countries'],
+            );
         }
         if ($language_enabled) {
-            $this->index->filters[] = new EnumFilter("language", $language_options, ["title" => "Languages"]);
+            $this->index->filters[] = new EnumFilter(
+                'language',
+                $language_options,
+                ['title' => 'Languages'],
+            );
         }
 
         foreach ($extra_filters as $filter) {

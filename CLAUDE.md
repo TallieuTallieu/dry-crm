@@ -29,20 +29,24 @@ src/
 ## Key conventions
 
 ### Managers
+
 - Extend `dry\orm\Manager`
 - Accept `array $kwargs` and use `extract($kwargs, EXTR_IF_EXISTS)` so that consuming projects can override `$model` and other vars
 - The `Create` action takes an array of components as first argument — pass individual component objects, not a nested array
 - Use `...$spread` when inlining a `$components` array into a `Stack`
 
 ### Models
+
 - Extend `dry\orm\Model`
 - Define `const TABLE`
 - Define `__toString()` for use in foreign key pickers
 
 ### Index columns
+
 `RelationManager` calls `$model::getIndexComponents()` to get the columns shown in the index table. Override this static method in a custom model to customise the columns — no config key needed.
 
 ### Create / edit components
+
 `RelationManager` calls `$model::getCreateComponents()` for the create popup form and `$model::getEditComponents()` for the edit view. By default `getEditComponents()` delegates to `getCreateComponents()`. Override `getEditComponents()` in a custom model to use different fields in the edit view.
 
 ### Header actions
@@ -56,6 +60,7 @@ If the object returned by `create_link()` has a non-null `action` property, that
 `crm.contact_extra_tabs` and `crm.relation_extra_tabs` are associative arrays of `label => components[]` pairs appended to the `TabbedContent` in the respective edit views (after the default "Relations" / "Contacts" tab). Can also be passed directly as an `extra_tabs` kwarg when instantiating the manager.
 
 ### Language enum
+
 `Language::enum()` returns `[['nl', 'Dutch'], ['fr', 'French'], ...]`. The language options in `ContactManager` can be overridden via `crm.language_options` config or a custom `language_options` kwarg.
 
 ## Configuration file
@@ -74,19 +79,19 @@ return [
 
 Keys in `config/crm.php` (bare, without `crm.` prefix). The service provider reads them as `crm.<key>` via Oak's dot-notation config.
 
-| Key in file | Service provider reads as | Default |
-|-------------|--------------------------|---------|
-| `extra_modules` | `crm.extra_modules` | `[]` |
-| `relation_model` | `crm.relation_model` | `Tnt\Crm\Model\Relation::class` |
-| `contact_model` | `crm.contact_model` | `Tnt\Crm\Model\Contact::class` |
-| `language_options` | `crm.language_options` | `Language::enum()` (ignored when `Contact::$languageEnabled` is `false`) |
-| `contact_extra_tabs` | `crm.contact_extra_tabs` | `[]` |
-| `contact_extra_filters` | `crm.contact_extra_filters` | `[]` |
-| `relation_extra_tabs` | `crm.relation_extra_tabs` | `[]` |
-| `relation_manager_filters` | `crm.relation_manager_filters` | `[]` |
-| `relation_extra_header_actions` | `crm.relation_extra_header_actions` | `[]` |
-| `contact_manager` | `crm.contact_manager` | `true` |
-| `country_manager` | `crm.country_manager` | `true` |
+| Key in file                     | Service provider reads as           | Default                                                                  |
+| ------------------------------- | ----------------------------------- | ------------------------------------------------------------------------ |
+| `extra_modules`                 | `crm.extra_modules`                 | `[]`                                                                     |
+| `relation_model`                | `crm.relation_model`                | `Tnt\Crm\Model\Relation::class`                                          |
+| `contact_model`                 | `crm.contact_model`                 | `Tnt\Crm\Model\Contact::class`                                           |
+| `language_options`              | `crm.language_options`              | `Language::enum()` (ignored when `Contact::$languageEnabled` is `false`) |
+| `contact_extra_tabs`            | `crm.contact_extra_tabs`            | `[]`                                                                     |
+| `contact_extra_filters`         | `crm.contact_extra_filters`         | `[]`                                                                     |
+| `relation_extra_tabs`           | `crm.relation_extra_tabs`           | `[]`                                                                     |
+| `relation_manager_filters`      | `crm.relation_manager_filters`      | `[]`                                                                     |
+| `relation_extra_header_actions` | `crm.relation_extra_header_actions` | `[]`                                                                     |
+| `contact_manager`               | `crm.contact_manager`               | `true`                                                                   |
+| `country_manager`               | `crm.country_manager`               | `true`                                                                   |
 
 ## Generating migrations
 

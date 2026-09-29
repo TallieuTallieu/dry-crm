@@ -15,7 +15,7 @@ class RelationContact extends Model
     const TABLE = 'crm_contact_relation';
 
     static $special_fields = [
-        "contact" => Contact::class,
-        "relation" => Relation::class,
+        'contact' => Contact::class,
+        'relation' => Relation::class,
     ];
 }

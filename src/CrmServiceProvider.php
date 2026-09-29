@@ -36,7 +36,6 @@ class CrmServiceProvider extends ServiceProvider
     public function boot(ContainerInterface $app)
     {
         if ($app->isRunningInConsole()) {
-
             $migrator = $app->getWith(Migrator::class, [
                 'name' => 'crm',
             ]);
@@ -63,45 +62,52 @@ class CrmServiceProvider extends ServiceProvider
         $relationModel = $config->get('crm.relation_model', Relation::class);
         $contactModel = $config->get('crm.contact_model', Contact::class);
         $countryManager = $config->get('crm.country_manager', true);
-        $languageOptions = $contactModel::$languageEnabled ? $config->get('crm.language_options', Language::enum()) : [];
+        $languageOptions = $contactModel::$languageEnabled
+            ? $config->get('crm.language_options', Language::enum())
+            : [];
 
-  
         $modules = [
-            new RelationManager(
-                $relationModel,
-                [
-                    'contact_model' => $contactModel,
-                    'extra_filters' => $config->get('crm.relation_manager_filters', []),
-                    'extra_header_actions' => array_map(
-                        fn($class) => (new $class())->create_link(),
-                        $config->get('crm.relation_extra_header_actions', [])
-                    ),
-                    'country_filter' => $countryManager,
-                    'contact_language_options' => $languageOptions,
-                ]
-            ),
+            new RelationManager($relationModel, [
+                'contact_model' => $contactModel,
+                'extra_filters' => $config->get(
+                    'crm.relation_manager_filters',
+                    [],
+                ),
+                'extra_header_actions' => array_map(
+                    fn($class) => new $class()->create_link(),
+                    $config->get('crm.relation_extra_header_actions', []),
+                ),
+                'country_filter' => $countryManager,
+                'contact_language_options' => $languageOptions,
+            ]),
         ];
 
         if ($config->get('crm.contact_manager', true)) {
-            $modules[] = new ContactManager(
-                $contactModel,
-                [
-                    'relation_model' => $relationModel,
-                    'country_filter' => $countryManager,
-                    'language_options' => $languageOptions,
-                    'extra_filters' => $config->get('crm.contact_extra_filters', []),
-                ]
-            );
+            $modules[] = new ContactManager($contactModel, [
+                'relation_model' => $relationModel,
+                'country_filter' => $countryManager,
+                'language_options' => $languageOptions,
+                'extra_filters' => $config->get(
+                    'crm.contact_extra_filters',
+                    [],
+                ),
+            ]);
         }
 
         if ($countryManager) {
             $modules[] = new CountryManager();
         }
 
-        $modules = array_merge($modules, array_map(fn($class) => new $class(), $config->get('crm.extra_modules', [])));
+        $modules = array_merge(
+            $modules,
+            array_map(
+                fn($class) => new $class(),
+                $config->get('crm.extra_modules', []),
+            ),
+        );
 
         return new Portal('crm', 'CRM', $modules, [
-            "icon" => "account_tree",
+            'icon' => 'account_tree',
             // "icon" => "mediation",
         ]);
     }

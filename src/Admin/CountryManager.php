@@ -25,17 +25,17 @@ class CountryManager extends Manager
         $click_to_edit = $model::$clickToEdit;
 
         parent::__construct($model, [
-            'icon' => "public",
+            'icon' => 'public',
             'singular' => 'country',
             'plural' => 'countries',
         ]);
 
-
-        $this->actions[] = $create = new Create([
-            StringEdit::create("name"),
-        ], [
-            'popup' => true,
-        ]);
+        $this->actions[] = $create = new Create(
+            [StringEdit::create('name')],
+            [
+                'popup' => true,
+            ],
+        );
 
         $this->actions[] = $this->edit = new Edit($create->components, [
             'popup' => true,
@@ -47,8 +47,8 @@ class CountryManager extends Manager
 
         $this->index = new Index([
             StringView::create('name'),
-            ...($manager_editable ? [$this->edit->create_link()] : []),
-            ...($manager_deletable ? [$delete->create_link()] : []),
+            ...$manager_editable ? [$this->edit->create_link()] : [],
+            ...$manager_deletable ? [$delete->create_link()] : [],
         ]);
 
         $this->index->sorter = new StaticSorter('name', StaticSorter::ASC);

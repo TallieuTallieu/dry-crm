@@ -22,8 +22,10 @@ class RelationContactManager extends Manager
 {
     public $edit;
 
-    public function __construct(PivotReferenceInterface $relatedModel, array $kwargs = [])
-    {
+    public function __construct(
+        PivotReferenceInterface $relatedModel,
+        array $kwargs = [],
+    ) {
         $model = RelationContact::class;
         $reference_model = null;
         extract($kwargs, EXTR_IF_EXISTS);
@@ -32,7 +34,8 @@ class RelationContactManager extends Manager
         $foreignKey = $relatedModel->getPivotForeignKey();
         $foreignKeyColumn = $relatedModel->getPivotDisplayColumn();
         $foreignKeyIndexName = $relatedModel->getPivotIndexName();
-        $reference_model = $reference_model ?? $relatedModel->getPivotReferenceModel();
+        $reference_model =
+            $reference_model ?? $relatedModel->getPivotReferenceModel();
 
         parent::__construct($model, [
             'icon' => Module::ICON_PEOPLE,
@@ -42,13 +45,12 @@ class RelationContactManager extends Manager
         $this->actions[] = $create = new Create(
             [
                 ForeignKeyIndexPicker::create($foreignKey)
-                    ->set_components([
-                        new StringView($foreignKeyColumn),
-                    ])
-                    ->set_searcher(new LikeSearcher($reference_model::$searchFields ?? [])),
-                StringEdit::create('function')
-                    ->set_label('Function'),
-                CreateNote::getNoteComponent()
+                    ->set_components([new StringView($foreignKeyColumn)])
+                    ->set_searcher(
+                        new LikeSearcher($reference_model::$searchFields ?? []),
+                    ),
+                StringEdit::create('function')->set_label('Function'),
+                CreateNote::getNoteComponent(),
             ],
             [
                 'popup' => true,
@@ -59,7 +61,9 @@ class RelationContactManager extends Manager
             'popup' => true,
         ]);
 
-        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register($this);
+        ['create' => $create_note, 'edit' => $edit_note] = CreateNote::register(
+            $this,
+        );
 
         $this->actions[] = $delete = new Delete();
 
@@ -68,8 +72,10 @@ class RelationContactManager extends Manager
         $this->footer[] = new Pagination();
 
         $this->index = new Index([
-            Foreign::create($foreignKey, new StringView($foreignKeyColumn), ["header" => $foreignKeyIndexName]),
-            StringView::create("function")->set_header("Function"),
+            Foreign::create($foreignKey, new StringView($foreignKeyColumn), [
+                'header' => $foreignKeyIndexName,
+            ]),
+            StringView::create('function')->set_header('Function'),
             CreateNote::renderTableActions($create_note, $edit_note),
             $edit->create_link(),
             $delete->create_link(),
