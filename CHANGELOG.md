@@ -5,6 +5,12 @@ follow [Semantic Versioning](https://semver.org). New entries are generated from
 commit messages by [dry-ci](https://github.com/TallieuTallieu/dry-ci); past
 entries may be edited by hand.
 
+## v1.0.1 - 2026-10-07
+
+### Features
+
+- Relation conditional row actions
+
 ## v1.0.0 - 2026-09-29
 
 ### Breaking changes
