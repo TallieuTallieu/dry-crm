@@ -2,8 +2,10 @@
 
 namespace Tnt\Crm\Admin;
 
+use dry\admin\component\Conditional;
 use dry\admin\component\Stack;
 use dry\admin\component\TabbedContent;
+use dry\expr\Expression;
 use dry\orm\action\Create;
 use dry\orm\action\Delete;
 use dry\orm\action\Edit;
@@ -39,6 +41,12 @@ class RelationManager extends Manager
         $pagination_amount = $model::$paginationAmount;
         $manager_editable = $model::$managerEditable;
         $manager_deletable = $model::$managerDeletable;
+        $editable_condition = $manager_editable
+            ? $model::getManagerEditableCondition()
+            : null;
+        $deletable_condition = $manager_deletable
+            ? $model::getManagerDeletableCondition()
+            : null;
 
         parent::__construct($model, [
             'icon' => 'business_center',
@@ -135,14 +143,23 @@ class RelationManager extends Manager
         }
 
         if ($manager_editable) {
-            $index_action_links[] = $edit->create_link();
+            $index_action_links[] = self::wrapCondition(
+                $editable_condition,
+                $edit->create_link(),
+            );
+        }
+
+        if ($manager_deletable) {
+            $index_action_links[] = self::wrapCondition(
+                $deletable_condition,
+                $delete->create_link(),
+            );
         }
 
         $this->index = new Index([
             ...$model::getIndexComponents(),
             CreateNote::renderTableActions($create_note, $edit_note),
             ...$index_action_links,
-            ...$manager_deletable ? [$delete->create_link()] : [],
         ])->set_query_params();
 
         if ($country_filter) {
@@ -164,8 +181,22 @@ class RelationManager extends Manager
             $this->index->paginator = new Paginator($pagination_amount);
         }
 
-        if ($manager_editable && $click_to_edit) {
+        if (
+            $manager_editable &&
+            $click_to_edit &&
+            $editable_condition === null
+        ) {
             $this->index->set_row_action($edit->create_link(''));
         }
+    }
+
+    /**
+     * Wraps a row link in a Conditional so it only renders for rows matching $condition.
+     */
+    private static function wrapCondition(?Expression $condition, $link)
+    {
+        return $condition !== null
+            ? new Conditional([$condition, [$link]])
+            : $link;
     }
 }
