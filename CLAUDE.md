@@ -49,6 +49,13 @@ src/
 
 `RelationManager` calls `$model::getCreateComponents()` for the create popup form and `$model::getEditComponents()` for the edit view. By default `getEditComponents()` delegates to `getCreateComponents()`. Override `getEditComponents()` in a custom model to use different fields in the edit view.
 
+### Conditional edit / delete links
+
+`RelationManager` calls `$model::getManagerEditableCondition()` and `$model::getManagerDeletableCondition()` (both return `?\dry\expr\Expression`, default `null`). Override them in a custom model to show the edit / delete link only on rows matching the expression. They are only used when `$managerEditable` / `$managerDeletable` is `true`.
+
+- A non-null edit condition disables `$clickToEdit` (the row action can't be conditional).
+- UI only: the links are hidden, but the `Edit` / `Delete` actions stay reachable for every row.
+
 ### Header actions
 
 `crm.relation_extra_header_actions` accepts an array of **class name strings**. The service provider instantiates each class and calls `->create_link()` on it. The resulting objects are appended to the relation index header after the "Add relation" button.
