@@ -5,6 +5,7 @@ namespace Tnt\Crm\Model;
 use dry\admin\component\Stack;
 use dry\admin\component\StringEdit;
 use dry\admin\component\StringView;
+use dry\expr\Expression;
 use dry\orm\component\ForeignKeyView;
 use dry\orm\Model;
 use dry\orm\relationship\HasMany;
@@ -134,6 +135,29 @@ class Relation extends Model implements PivotReferenceInterface
     }
 
     public static function getPostSaveCallback(): ?callable
+    {
+        return null;
+    }
+
+    /**
+     * Rows for which the index shows the edit link. Null shows it on every row.
+     * Only used when $managerEditable is true. Returning a condition disables
+     * $clickToEdit, since the row action can't be conditional.
+     *
+     * UI only: hides the link but does not prevent the edit action itself.
+     */
+    public static function getManagerEditableCondition(): ?Expression
+    {
+        return null;
+    }
+
+    /**
+     * Rows for which the index shows the delete link. Null shows it on every row.
+     * Only used when $managerDeletable is true.
+     *
+     * UI only: hides the link but does not prevent the delete action itself.
+     */
+    public static function getManagerDeletableCondition(): ?Expression
     {
         return null;
     }
